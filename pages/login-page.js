@@ -1,0 +1,21 @@
+import { expect, Locator, Page } from '@playwright/test';
+
+export class LoginPage {
+    constructor(page) {
+        this.page = page;
+        this.emailLocator = page.getByRole('textbox', { name: 'Email' });
+        this.passwordLocator = page.getByRole('textbox', { name: 'Пароль' });
+        this.loginButtonLocator = page.getByRole('button', { name: 'Войти' });
+        // this.errorBox = page.locator('div.error-message-container');
+    }
+    async openLoginPage() {
+        await this.page.goto('http://localhost:5173/login');
+    }
+    async login(username, password) {
+        await this.emailLocator.fill(username);
+        await this.passwordLocator.fill(password);
+        await this.loginButtonLocator.click();
+    }
+}
+
+// module.exports = LoginPage;
