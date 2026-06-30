@@ -81,7 +81,7 @@ test.describe('Login page tests', () => {
             credentials.phone,
             credentials.password
         );
-        await registrationPage.verifyRegistrationSuccess();
+        await registrationPage.verifyRegistrationSuccess(loginPage);
 
     });
 
@@ -101,11 +101,11 @@ test.describe('Login page tests', () => {
             credentials.phone,
             credentials.password
         );
-        await registrationPage.verifyRegistrationSuccess();
+        await registrationPage.verifyRegistrationSuccess(loginPage);
 
     });
 
-    test('registration with invalid credentials', async ({ page }) => {
+    test('registration with invalid email', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
@@ -113,15 +113,39 @@ test.describe('Login page tests', () => {
 
         const registrationPage = new RegistrationPage(page);
         const credentials = new Credentials();
+        const invalidEmail = faker.internet.email().slice(0, -3);
         await registrationPage.register(
             credentials.name,
             credentials.surname,
-            credentials.email.slice(0, -1),
+            invalidEmail,
             credentials.username,
-            credentials.phone.slice(0, -3),
+            credentials.phone,
             credentials.password
         );
-        await registrationPage.verifyRegistrationFailure();
+        console.log(credentials.name, credentials.surname, invalidEmail, credentials.username, credentials.phone, credentials.password);
+        await registrationPage.verifyRegistrationFailure(loginPage);
+    });
+
+    test('registration with invalid phone number', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.goToRegistrationPage();
+
+        const registrationPage = new RegistrationPage(page);
+        const credentials = new Credentials();
+        const invalidPhone = '1234567890'; // Example of an invalid phone number
+        await registrationPage.register(
+            credentials.name,
+            credentials.surname,
+            credentials.email,
+            credentials.username,
+            invalidPhone,
+            credentials.password
+        );
+        console.log(credentials.name, credentials.surname, credentials.email, credentials.username, invalidPhone, credentials.password);
+        await registrationPage.verifyRegistrationFailure(loginPage);
+
     });
 
     test('уже есть аккаунт? войти', async ({ page }) => {
@@ -150,6 +174,45 @@ test.describe('Login page tests', () => {
             credentials.phone,
             credentials.password
         );
-        await registrationPage.verifyRegistrationFailure();
+        await registrationPage.verifyRegistrationFailure(loginPage);
     });
+
+    test('registration with existing phone number', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.goToRegistrationPage();
+
+        const registrationPage = new RegistrationPage(page);
+        const credentials = new Credentials();
+        await registrationPage.register(
+            credentials.name,
+            credentials.surname,
+            credentials.email,
+            credentials.username,
+            '+10000000000',
+            credentials.password
+        );
+        await registrationPage.verifyRegistrationFailure(loginPage);
+    });
+
+    test('registration with existing username', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.goToRegistrationPage();
+
+        const registrationPage = new RegistrationPage(page);
+        const credentials = new Credentials();
+        await registrationPage.register(
+            credentials.name,
+            credentials.surname,
+            credentials.email,
+            'user1',
+            credentials.phone,
+            credentials.password
+        );
+        await registrationPage.verifyRegistrationFailure(loginPage);
+    });
+
 });

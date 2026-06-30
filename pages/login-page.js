@@ -7,6 +7,7 @@ export class LoginPage {
         this.passwordLocator = page.getByRole('textbox', { name: 'Пароль' });
         this.loginButtonLocator = page.getByRole('button', { name: 'Войти' });
         this.registrationButtonLocator = page.getByRole('link', { name: 'Зарегистрироваться' });
+        this.successfulRegistrationMessageLocator = page.getByText('Регистрация прошла успешно! Теперь вы можете войти.');
     }
     async openLoginPage() {
         await this.page.goto('http://localhost:5173/login');

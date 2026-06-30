@@ -23,13 +23,11 @@ export class RegistrationPage {
         await this.registerButtonLocator.click();
     }
 
-    async verifyRegistrationSuccess() {
-        await this.page.waitForURL('http://localhost:5173/login');
-        await expect(this.page).toHaveURL('http://localhost:5173/login');
+    async verifyRegistrationSuccess(loginPage) {
+        await loginPage.successfulRegistrationMessageLocator.waitFor({ state: 'attached' });
     }
 
-    async verifyRegistrationFailure() {
-        await this.page.waitForURL('http://localhost:5173/register');
-        await expect(this.page).not.toHaveURL('http://localhost:5173/login');
+    async verifyRegistrationFailure(loginPage) {
+        await loginPage.successfulRegistrationMessageLocator.waitFor({ state: 'detached' });
     }
 }

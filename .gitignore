@@ -9,3 +9,4 @@ node_modules/
 /pages-deprecated/
 /tests-deprecated/
 desktop.ini
+tests/sandbox.spec.js

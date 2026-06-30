@@ -6,7 +6,7 @@ export class Credentials {
         this.surname = faker.person.lastName();
         this.email = faker.internet.email();
         this.username = faker.internet.username();
-        this.phone = "+" + faker.number.int(375290000000, 375299999999);
+        this.phone = faker.phone.number({ style: 'international' });
         this.password = faker.internet.password();
     }
 }
