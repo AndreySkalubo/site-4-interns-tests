@@ -6,15 +6,21 @@ export class LoginPage {
         this.emailLocator = page.getByRole('textbox', { name: 'Email' });
         this.passwordLocator = page.getByRole('textbox', { name: 'Пароль' });
         this.loginButtonLocator = page.getByRole('button', { name: 'Войти' });
-        // this.errorBox = page.locator('div.error-message-container');
+        this.registrationButtonLocator = page.getByRole('link', { name: 'Зарегистрироваться' });
     }
     async openLoginPage() {
         await this.page.goto('http://localhost:5173/login');
+        await this.page.waitForURL('http://localhost:5173/login');
+        await expect(this.page).toHaveURL('http://localhost:5173/login');
     }
     async login(username, password) {
         await this.emailLocator.fill(username);
         await this.passwordLocator.fill(password);
         await this.loginButtonLocator.click();
+    }
+    async goToRegistrationPage() {
+        await this.registrationButtonLocator.click();
+        await this.page.waitForURL('http://localhost:5173/register');
     }
 }
 
