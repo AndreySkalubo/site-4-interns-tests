@@ -214,5 +214,89 @@ test.describe('Login page tests', () => {
         );
         await registrationPage.verifyRegistrationFailure(loginPage);
     });
+});
+
+test.describe('Catalogue and product tests', () => {
+
+    test('add products to cart', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.addRandomProductsToCart(3);
+
+        const cartPage = new CartPage(page);
+        await cartPage.openCartPage();
+        await cartPage.verifyCartItemsCount(3);
+    });
+
+    test('go to several random products pages', async ({ page }) => {
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.openCataloguePage();
+
+        for (let i = 0; i < 3; i++) {
+            const productPage = new ProductPage(page);
+            // await cataloguePage.openRandomProduct();
+            // await productPage.verifyProductPageOpened();
+            // await page.goBack();
+        }
+    });
+
+    test('add products via product page', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.openCataloguePage();
+        await cataloguePage.openRandomProduct();
+
+        const productPage = new ProductPage(page);
+        await productPage.addToCart();
+
+        const cartPage = new CartPage(page);
+        await cartPage.openCartPage();
+        await cartPage.verifyCartItemsCount(1);
+    });
+
+    test('verify product images presence', async ({ page }) => {
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.openCataloguePage();
+        await cataloguePage.verifyAllProductImagesVisible();
+    });
+
+    test('verify dynamic image zoom', async ({ page }) => {
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.openCataloguePage();
+        await cataloguePage.openRandomProduct();
+
+        const productPage = new ProductPage(page);
+        await productPage.hoverOverImage();
+        await productPage.verifyImageZoomed();
+    });
+
+    test('verify page zoom in and out', async ({ page }) => {
+
+        const cataloguePage = new CataloguePage(page);
+        await cataloguePage.openCataloguePage();
+
+        await page.keyboard.down('Control');
+        await page.keyboard.press('+');
+        await page.keyboard.press('+');
+        await page.keyboard.up('Control');
+        await expect(page).toHaveURL('http://localhost:5173/catalogue');
+
+        await page.keyboard.down('Control');
+        await page.keyboard.press('-');
+        await page.keyboard.press('-');
+        await page.keyboard.up('Control');
+        await expect(page).toHaveURL('http://localhost:5173/catalogue');
+    });
 
 });
