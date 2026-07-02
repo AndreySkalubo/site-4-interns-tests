@@ -2,7 +2,10 @@ export class ProductPage {
     constructor(page) {
         this.page = page;
     }
-    verifyProductPageOpened() {
-        return this.page.getByRole('heading', { name: 'Товар' }).isVisible();
+    isProductPageOpened() {
+        return this.page.getByRole('heading', { name: 'Описание' }).isVisible();
+    }
+    addToCart() {
+        return this.page.getByRole('button', { name: 'Добавить в корзину' }).click();
     }
 }

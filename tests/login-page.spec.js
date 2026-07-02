@@ -5,6 +5,10 @@ import { RegistrationPage } from '../pages/registration-page.js';
 import { CataloguePage } from '../pages/catalogue-page.js';
 import { Credentials } from '../helpers/credentials.js';
 import { CartPage } from "../pages/cart-page";
+import { ProductPage } from "../pages/product-page";
+import { HeaderComponent } from "../pages/components/header-component";
+
+//Добавить комментарии!!
 
 test.describe('Login page tests', () => {
     test('admin login', async ({ page }) => {
@@ -155,7 +159,6 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
         await loginPage.goToRegistrationPage();
 
-        const registrationPage = new RegistrationPage(page);
         await expect(page).toHaveURL('http://localhost:5173/register');
     });
 
@@ -238,14 +241,17 @@ test.describe('Catalogue and product tests', () => {
 
     test('go to several random products pages', async ({ page }) => {
 
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
+
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.openCataloguePage();
+        const productPage = new ProductPage(page);
 
         for (let i = 0; i < 3; i++) {
-            const productPage = new ProductPage(page);
             await cataloguePage.openRandomProduct();
-            await productPage.verifyProductPageOpened();
-            // await page.goBack();
+            await expect(productPage.isProductPageOpened()).toBeTruthy();
+            await page.goBack();
         }
     });
 
@@ -256,25 +262,34 @@ test.describe('Catalogue and product tests', () => {
         await loginPage.login('user1@test.com', 'user123');
 
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.openCataloguePage();
         await cataloguePage.openRandomProduct();
 
         const productPage = new ProductPage(page);
         await productPage.addToCart();
 
         const cartPage = new CartPage(page);
-        await cartPage.openCartPage();
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToCartPage();
         await cartPage.verifyCartItemsCount(1);
+        await cartPage.removeAllItemsFromCart();
     });
 
     test('verify product images presence', async ({ page }) => {
 
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
+        
         const cataloguePage = new CataloguePage(page);
         await cataloguePage.openCataloguePage();
         await cataloguePage.verifyAllProductImagesVisible();
     });
 
     test('verify dynamic image zoom', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
 
         const cataloguePage = new CataloguePage(page);
         await cataloguePage.openCataloguePage();
@@ -286,6 +301,10 @@ test.describe('Catalogue and product tests', () => {
     });
 
     test('verify page zoom in and out', async ({ page }) => {
+
+        const loginPage = new LoginPage(page);
+        await loginPage.openLoginPage();
+        await loginPage.login('user1@test.com', 'user123');
 
         const cataloguePage = new CataloguePage(page);
         await cataloguePage.openCataloguePage();

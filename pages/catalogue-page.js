@@ -6,12 +6,6 @@ export class CataloguePage {
         this.returnButton = page.getByRole('link', { name: 'Shop System' });
     }
 
-    async openCataloguePage() {
-        await this.page.goto('http://localhost:5173/');
-        await this.page.waitForURL('http://localhost:5173/');
-        await expect(this.page).toHaveURL('http://localhost:5173/');
-    }
-
     async addProductsToCart(number) {
         const addButtons = await this.page.getByRole('button', {
             name: 'В корзину', type: 'button', exact: true
@@ -26,7 +20,7 @@ export class CataloguePage {
     }
 
     async openRandomProduct() {
-        const products = await this.page.getByRole('link', { name: 'Товар' });
+        const products = await this.page.getByRole('link', { name: 'В корзину' });
         const randomIndex = Math.floor(Math.random() * await products.count());
         await products.nth(randomIndex).click();
     }
