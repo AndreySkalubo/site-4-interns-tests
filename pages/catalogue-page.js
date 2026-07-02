@@ -1,5 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
-import {faker} from "@faker-js/faker";
+import { expect } from '@playwright/test';
 
 export class CataloguePage {
     constructor(page) {
@@ -13,10 +12,22 @@ export class CataloguePage {
         await expect(this.page).toHaveURL('http://localhost:5173/');
     }
 
-    async addRandomProductsToCart(number) {
-        const addButtons = await this.page.getByRole('button', { name: 'В корзину', type: 'button' });
+    async addProductsToCart(number) {
+        const addButtons = await this.page.getByRole('button', {
+            name: 'В корзину', type: 'button', exact: true
+        });
         for (let i = 0; i < number; i++) {
-            await addButtons.nth(faker.number.int({ min: 0, max: addButtons.length - 1 })).click();
+            await addButtons.nth(i).click();
         }
+    }
+
+    async gotoCartPage() {
+        await this.page.getByRole('link', { name: 'Корзина' }).click();
+    }
+
+    async openRandomProduct() {
+        const products = await this.page.getByRole('link', { name: 'Товар' });
+        const randomIndex = Math.floor(Math.random() * await products.count());
+        await products.nth(randomIndex).click();
     }
 }
