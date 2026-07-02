@@ -4,6 +4,7 @@ import { LoginPage } from '../pages/login-page.js';
 import { RegistrationPage } from '../pages/registration-page.js';
 import { CataloguePage } from '../pages/catalogue-page.js';
 import { Credentials } from '../helpers/credentials.js';
+import { CartPage } from "../pages/cart-page";
 
 test.describe('Login page tests', () => {
     test('admin login', async ({ page }) => {
@@ -225,11 +226,14 @@ test.describe('Catalogue and product tests', () => {
         await loginPage.login('user1@test.com', 'user123');
 
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.addRandomProductsToCart(3);
+        await cataloguePage.addProductsToCart(3);
+
+        await cataloguePage.gotoCartPage();
 
         const cartPage = new CartPage(page);
-        await cartPage.openCartPage();
         await cartPage.verifyCartItemsCount(3);
+        await cartPage.removeAllItemsFromCart();
+
     });
 
     test('go to several random products pages', async ({ page }) => {
@@ -239,8 +243,8 @@ test.describe('Catalogue and product tests', () => {
 
         for (let i = 0; i < 3; i++) {
             const productPage = new ProductPage(page);
-            // await cataloguePage.openRandomProduct();
-            // await productPage.verifyProductPageOpened();
+            await cataloguePage.openRandomProduct();
+            await productPage.verifyProductPageOpened();
             // await page.goBack();
         }
     });
