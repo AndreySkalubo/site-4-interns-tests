@@ -10,6 +10,7 @@ import { HeaderComponent } from "../pages/components/header-component";
 import { AdminPanel } from "../pages/admin-panel.js";
 import { OrdersPage } from "../pages/orders-page.js";
 import { ProfilePage } from "../pages/profile-page.js";
+import { validateProduct, validateProductDeleted } from "../helpers/validate-product.js";
 
 //Добавить комментарии!!
 
@@ -380,10 +381,68 @@ test.describe('Admin panel tests', () => {
             '1000',
             'https://i0.wp.com/www.ian.ng/wp-content/uploads/2021/01/product-strategy.png?fit=1000%2C523&ssl=1'
         );
-        await adminPanel.clickProductSaveButton();
+        await adminPanel.clickSaveButton();
 
-        const cataloguePage = new CataloguePage(page);
         await adminPanel.returnToCatalogue();
-        await cataloguePage.validateProduct('Test Product');
+        await validateProduct('Test Product', page);
+    });
+    test('edit product', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsAdmin();
+
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToAdminPanel();
+        const adminPanel = new AdminPanel(page);
+        await adminPanel.goToProductMenu();
+        await adminPanel.clickEditLastProductButton();
+        await adminPanel.fillProductForm(
+            'Test Product Edited',
+            'This is a test product description edited.',
+            '1500',
+            'https://i0.wp.com/www.ian.ng/wp-content/uploads/2021/01/product-strategy.png?fit=1000%2C523&ssl=1'
+        );
+        await adminPanel.clickSaveButton();
+
+        await adminPanel.returnToCatalogue();
+        await validateProduct('Test Product Edited', page);
+    });
+    test('delete product', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsAdmin();
+
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToAdminPanel();
+        const adminPanel = new AdminPanel(page);
+        await adminPanel.goToProductMenu();
+        await adminPanel.clickAddProductButton();
+        await adminPanel.fillProductForm(
+            'Test Product Marked for Deletion',
+            'This is a test product description Marked for Deletion.',
+            '1337',
+            'https://i0.wp.com/www.ian.ng/wp-content/uploads/2021/01/product-strategy.png?fit=1000%2C523&ssl=1'
+        );
+        await adminPanel.clickSaveButton();
+        await adminPanel.clickProductDeleteButton();
+
+        await adminPanel.returnToCatalogue();
+        await validateProductDeleted('Test Product Marked for Deletion', page);
+    });
+    test('create warehouse', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsAdmin();
+
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToAdminPanel();
+        const adminPanel = new AdminPanel(page);
+
+        await adminPanel.goToWarehouseMenu();
+        await adminPanel.clickAddWarehouseButton();
+        await adminPanel.fillWarehouseForm(
+            'Test Warehouse',
+            '123 Test Street, Test City'
+        );
+        await adminPanel.clickSaveButton();
+
+        await validateProduct('Test Warehouse', page);
     });
 });

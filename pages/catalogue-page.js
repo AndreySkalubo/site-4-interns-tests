@@ -31,7 +31,8 @@ export class CataloguePage {
             expect(imageResponse.ok()).toBeTruthy();
         }
     }
-    async validateProduct(productName) {
-        await expect(this.page.getByText(productName, { exact: true }).last()).toBeVisible();
-    }
+    // async validateProduct(productName) {
+    //     await expect(this.page.getByText(productName, { exact: true }).last()).toBeVisible();
+    // }
+
 }
