@@ -23,6 +23,16 @@ export class LoginPage {
         await this.registrationButtonLocator.click();
         await this.page.waitForURL('http://localhost:5173/register');
     }
+    async loginAsUser1() {
+        await this.openLoginPage();
+        await this.login('user1@test.com', 'user123');
+
+    }
+    async loginAsAdmin() {
+        await this.openLoginPage();
+        await this.login('admin@test.com', 'admin123');
+
+    }
 }
 
 // module.exports = LoginPage;

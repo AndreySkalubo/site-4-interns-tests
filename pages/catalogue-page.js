@@ -1,7 +1,9 @@
+import { expect } from '@playwright/test';
+
 export class CataloguePage {
     constructor(page) {
         this.page = page;
-        this.returnButton = page.getByRole('link', { name: 'Shop System' });
+        this.catalogueHeading = page.getByRole('heading', { name: 'Каталог товаров' });
     }
 
     async addProductsToCart(number) {
@@ -13,13 +15,23 @@ export class CataloguePage {
         }
     }
 
-    async gotoCartPage() {
-        await this.page.getByRole('link', { name: 'Корзина' }).click();
-    }
-
     async openRandomProduct() {
         const products = await this.page.getByRole('link', { name: 'В корзину' });
         const randomIndex = Math.floor(Math.random() * await products.count());
         await products.nth(randomIndex).click();
+    }
+
+    async validateImageLinks() {
+        await this.page.waitForLoadState('networkidle');
+        const imageLinks = await this.page.getByRole('img');
+        console.log(`Found ${await imageLinks.count()} image links on the page.`);
+        for (let i = 0; i < await imageLinks.count(); i++) {
+            const imageUrl = await imageLinks.nth(i).getAttribute('src');
+            const imageResponse = await this.page.request.get(imageUrl);
+            expect(imageResponse.ok()).toBeTruthy();
+        }
+    }
+    async validateProduct(productName) {
+        await expect(this.page.getByText(productName, { exact: true }).last()).toBeVisible();
     }
 }

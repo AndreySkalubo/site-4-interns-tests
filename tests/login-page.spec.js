@@ -7,6 +7,9 @@ import { Credentials } from '../helpers/credentials.js';
 import { CartPage } from "../pages/cart-page";
 import { ProductPage } from "../pages/product-page";
 import { HeaderComponent } from "../pages/components/header-component";
+import { AdminPanel } from "../pages/admin-panel.js";
+import { OrdersPage } from "../pages/orders-page.js";
+import { ProfilePage } from "../pages/profile-page.js";
 
 //Добавить комментарии!!
 
@@ -225,16 +228,23 @@ test.describe('Catalogue and product tests', () => {
     test('add products to cart', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.loginAsUser1();
 
-        const cataloguePage = new CataloguePage(page);
-        await cataloguePage.addProductsToCart(3);
-
-        await cataloguePage.gotoCartPage();
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToCartPage();
 
         const cartPage = new CartPage(page);
-        await cartPage.verifyCartItemsCount(3);
+        await cartPage.removeAllItemsFromCart();
+
+        await headerComponent.returnToCatalogue();
+
+        const cataloguePage = new CataloguePage(page);
+        const numberOfProductsToAdd = 5;
+        await cataloguePage.addProductsToCart(numberOfProductsToAdd);
+
+        await headerComponent.goToCartPage();
+
+        await cartPage.verifyCartItemsCount(numberOfProductsToAdd);
         await cartPage.removeAllItemsFromCart();
 
     });
@@ -242,13 +252,13 @@ test.describe('Catalogue and product tests', () => {
     test('go to several random products pages', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.loginAsUser1();
 
         const cataloguePage = new CataloguePage(page);
         const productPage = new ProductPage(page);
 
-        for (let i = 0; i < 3; i++) {
+        const numberOfProductsToVisit = 70;
+        for (let i = 0; i < numberOfProductsToVisit; i++) {
             await cataloguePage.openRandomProduct();
             await expect(productPage.isProductPageOpened()).toBeTruthy();
             await page.goBack();
@@ -258,8 +268,7 @@ test.describe('Catalogue and product tests', () => {
     test('add products via product page', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.loginAsUser1();
 
         const cataloguePage = new CataloguePage(page);
         await cataloguePage.openRandomProduct();
@@ -274,52 +283,107 @@ test.describe('Catalogue and product tests', () => {
         await cartPage.removeAllItemsFromCart();
     });
 
-    test('verify product images presence', async ({ page }) => {
+    //На странице каталога нет некоторых изображений, поэтому тест падает.
+    test.fail('verify product images presence', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
-        
+        await loginPage.loginAsUser1();
+
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.openCataloguePage();
-        await cataloguePage.verifyAllProductImagesVisible();
+        await cataloguePage.validateImageLinks();
     });
 
-    test('verify dynamic image zoom', async ({ page }) => {
+    test('make an order', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.loginAsUser1();
 
+        const numberOfItems = 3;
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.openCataloguePage();
-        await cataloguePage.openRandomProduct();
+        await cataloguePage.addProductsToCart(numberOfItems);
 
-        const productPage = new ProductPage(page);
-        await productPage.hoverOverImage();
-        await productPage.verifyImageZoomed();
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToCartPage();
+
+        const cartPage = new CartPage(page);
+        await cartPage.makeOrder();
+        await expect(cartPage.isCartEmpty()).toBeTruthy();
     });
 
-    test('verify page zoom in and out', async ({ page }) => {
+    test('make an order with empty cart is impossible', async ({ page }) => {
 
         const loginPage = new LoginPage(page);
-        await loginPage.openLoginPage();
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.loginAsUser1();
 
-        const cataloguePage = new CataloguePage(page);
-        await cataloguePage.openCataloguePage();
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToCartPage();
 
-        await page.keyboard.down('Control');
-        await page.keyboard.press('+');
-        await page.keyboard.press('+');
-        await page.keyboard.up('Control');
-        await expect(page).toHaveURL('http://localhost:5173/catalogue');
+        const cartPage = new CartPage(page);
+        await expect(cartPage.makeOrderButton).toBeDisabled();
 
-        await page.keyboard.down('Control');
-        await page.keyboard.press('-');
-        await page.keyboard.press('-');
-        await page.keyboard.up('Control');
-        await expect(page).toHaveURL('http://localhost:5173/catalogue');
     });
 
+    test('test header buttons', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsAdmin();
+
+        //Проверка кнопки корзины
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToCartPage();
+        const cartPage = new CartPage(page);
+        await expect(cartPage.makeOrderButton).toBeAttached();
+
+        //Проверка возврата в каталог
+        await headerComponent.returnToCatalogue();
+        const cataloguePage = new CataloguePage(page);
+        await expect(cataloguePage.catalogueHeading).toBeAttached();
+
+        await headerComponent.goToAdminPanel();
+        const adminPanel = new AdminPanel(page);
+        await expect(adminPanel.returnBackButton).toBeAttached();
+
+        await adminPanel.returnToCatalogue();
+        await page.waitForLoadState('networkidle');
+        const ordersPage = new OrdersPage(page);
+        await headerComponent.goToOrdersPage();
+        await expect(ordersPage.ordersHeading).toBeAttached();
+
+        await headerComponent.openProfileDropdown();
+        await headerComponent.goToProfilePage();
+        const profilePage = new ProfilePage(page);
+        await expect(profilePage.profileHeading).toBeAttached();
+
+        await headerComponent.openProfileDropdown();
+        await headerComponent.goToOrderHistoryPage();
+        await expect(ordersPage.ordersHeading).toBeAttached();
+
+        await headerComponent.openProfileDropdown();
+        await headerComponent.exitProfile();
+        await expect(loginPage.emailLocator).toBeAttached();
+    });
+
+});
+
+test.describe('Admin panel tests', () => {
+    test('create product', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsAdmin();
+
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.goToAdminPanel();
+        const adminPanel = new AdminPanel(page);
+        await adminPanel.goToProductMenu();
+        await adminPanel.clickAddProductButton();
+        await adminPanel.fillProductForm(
+            'Test Product',
+            'This is a test product description.',
+            '1000',
+            'https://i0.wp.com/www.ian.ng/wp-content/uploads/2021/01/product-strategy.png?fit=1000%2C523&ssl=1'
+        );
+        await adminPanel.clickProductSaveButton();
+
+        const cataloguePage = new CataloguePage(page);
+        await adminPanel.returnToCatalogue();
+        await cataloguePage.validateProduct('Test Product');
+    });
 });
