@@ -1,16 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { LoginPage } from '../pages/login-page.js';
-import { RegistrationPage } from '../pages/registration-page.js';
-import { CataloguePage } from '../pages/catalogue-page.js';
-import { Credentials } from '../helpers/credentials.js';
-import { CartPage } from "../pages/cart-page";
-import { ProductPage } from "../pages/product-page";
-import { HeaderComponent } from "../pages/components/header-component";
-import { AdminPanel } from "../pages/admin-panel.js";
-import { OrdersPage } from "../pages/orders-page.js";
-import { ProfilePage } from "../pages/profile-page.js";
-import { validateProduct, validateProductDeleted } from "../helpers/validate-product.js";
+import { LoginPage } from '../src/pages/login-page.js';
+import { RegistrationPage } from '../src/pages/registration-page.js';
+import { CataloguePage } from '../src/pages/catalogue-page.js';
+import { Credentials } from '../src/helpers/credentials.js';
+import { CartPage } from "../src/pages/cart-page.js";
+import { ProductPage } from "../src/pages/product-page.js";
+import { HeaderComponent } from "../src/pages/components/header-component.js";
+import { AdminPanel } from "../src/pages/admin-panel.js";
+import { OrdersPage } from "../src/pages/orders-page.js";
+import { ProfilePage } from "../src/pages/profile-page.js";
+import { validateProduct, validateProductDeleted } from "../src/helpers/validate-product.js";
+import { testConfigCredentials } from '../src/config/test-config-credentials.js';
 
 //Добавить комментарии!!
 
@@ -20,7 +21,7 @@ test.describe('Login page tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
 
-        await loginPage.login('admin@test.com', 'admin123');
+        await loginPage.login(testConfigCredentials.admin.email, testConfigCredentials.admin.password);
         await page.waitForURL('http://localhost:5173/');
 
     });
@@ -30,7 +31,7 @@ test.describe('Login page tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
 
-        await loginPage.login('user1@test.com', 'user123');
+        await loginPage.login(testConfigCredentials.user1.email, testConfigCredentials.user1.password);
         await page.waitForURL('http://localhost:5173/');
 
     });
@@ -40,7 +41,7 @@ test.describe('Login page tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
 
-        await loginPage.login('user1@test.co', 'user12');
+        await loginPage.login(testConfigCredentials.user1BadData.email, testConfigCredentials.user1BadData.password);
         await expect(page).not.toHaveURL('http://localhost:5173/');
 
     });
@@ -50,7 +51,7 @@ test.describe('Login page tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
 
-        await loginPage.login('user1@test.com', '');
+        await loginPage.login(testConfigCredentials.user1.email, '');
         await expect(page).not.toHaveURL('http://localhost:5173/');
 
     });
@@ -60,7 +61,7 @@ test.describe('Login page tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.openLoginPage();
 
-        await loginPage.login('', 'user123');
+        await loginPage.login('', testConfigCredentials.user1.password);
         await expect(page).not.toHaveURL('http://localhost:5173/');
 
     });
@@ -415,9 +416,10 @@ test.describe('Admin panel tests', () => {
         const adminPanel = new AdminPanel(page);
         await adminPanel.goToProductMenu();
         await adminPanel.clickAddProductButton();
+        const uniqueDeletableName = 'This is a test product description Marked for Deletion.' + Math.random();
         await adminPanel.fillProductForm(
             'Test Product Marked for Deletion',
-            'This is a test product description Marked for Deletion.',
+            uniqueDeletableName,
             '1337',
             'https://i0.wp.com/www.ian.ng/wp-content/uploads/2021/01/product-strategy.png?fit=1000%2C523&ssl=1'
         );
@@ -425,7 +427,7 @@ test.describe('Admin panel tests', () => {
         await adminPanel.clickProductDeleteButton();
 
         await adminPanel.returnToCatalogue();
-        await validateProductDeleted('Test Product Marked for Deletion', page);
+        await validateProductDeleted(uniqueDeletableName, page);
     });
     test('create warehouse', async ({ page }) => {
         const loginPage = new LoginPage(page);
