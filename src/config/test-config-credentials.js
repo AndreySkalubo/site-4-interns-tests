@@ -30,5 +30,22 @@ export const testConfigCredentials = {
     emptyLoginData: {
         "email": null,
         "password": null
+    },
+    sqlInjection: {
+        "email": "admin@test.com' --",
+        "password": null
+    },
+    sqlInjection2: {
+        "email": "' OR '1'='1",
+        "password": "' OR '1'='1"
+    },
+    existingUser: {
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "user1@test.com",
+        "username": "user1",
+        "phoneNumber": "+10000000001",
+        "password": "user123",
+        "role": "USER"
     }
 };

@@ -9,4 +9,15 @@ export class Credentials {
         this.phone = faker.phone.number({ style: 'international' });
         this.password = faker.internet.password();
     }
+    getPayload() {
+        return {
+            firstname: this.name,
+            lastname: this.surname,
+            email: this.email,
+            username: this.username,
+            phoneNumber: this.phone,
+            password: this.password,
+            role: "USER"
+        };
+    }
 }
