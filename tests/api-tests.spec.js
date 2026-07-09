@@ -8,6 +8,7 @@ import { ProductService } from "../src/api/product-service";
 import { testConfigProducts } from "../src/config/test-config-products";
 import { giveRandomItemId } from "../src/helpers/give-random-item-id";
 import { UserMenuService } from "../src/api/admin-service";
+import { testConfigOrders } from "../src/config/test-config-orders";
 
 test.describe('Authentication tests', () => {
 
@@ -248,32 +249,14 @@ test.describe('Product tests', () => {
 
     test('Make an order', async ({ request }) => {
         const productService = new ProductService(request);
-        const payload = {
-            "items": [
-                {
-                    "product_id": giveRandomItemId(),
-                    "quantity": 1
-                },
-                {
-                    "product_id": giveRandomItemId(),
-                    "quantity": 1
-                },
-                {
-                    "product_id": giveRandomItemId(),
-                    "quantity": 1
-                }
-            ]
-        };
-        await productService.makeOrder(payload, 201);
+        await productService.makeOrder(testConfigOrders.testOrder, 201);
     });
     //You are able to send out an empty array of items and create an empty order,
     //which shouldn't be the case
     test.fail('Make an order with empty array of items', async ({ request }) => {
         const productService = new ProductService(request);
-        const payload = {
-            "items": []
-        };
-        await productService.makeOrder(payload, 400);
+
+        await productService.makeOrder(testConfigOrders.testEmptyOrder, 400);
     });
 
 });
