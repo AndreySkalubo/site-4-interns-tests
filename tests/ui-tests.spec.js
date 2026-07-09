@@ -140,7 +140,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
         await loginPage.goToRegistrationPage();
 
-        await expect(page).toHaveURL(urls.registrationURL);
+        await expect(page).toHaveURL(urls.webRegistrationURL);
     });
 
     test('registration with existing email', async ({ page }) => {

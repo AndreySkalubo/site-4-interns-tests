@@ -3,6 +3,7 @@ export const urls = {
     baseURL: baseURL,
     loginURL: `${baseURL}/api/auth/login`,
     registrationURL: `${baseURL}/api/auth/register`,
+    webRegistrationURL:`${baseURL}/register`,
     addProductToBucketURL: `${baseURL}/api/bucket/1/addProduct`,
     removeProductFromBucketURL: `${baseURL}/api/bucket/1/removeProduct`,
     getProductURL: `${baseURL}/api/product/`,
