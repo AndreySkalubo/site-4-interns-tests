@@ -11,7 +11,7 @@ export class RegistrationPage {
         this.loginRedirectButtonLocator = page.getByRole('link', { name: 'Войти' });
     }
 
-    async register(firstname, lastname, email, username, phoneNumber, password) {
+    async register({ firstname, lastname, email, username, phoneNumber, password }) {
         await this.nameLocator.fill(firstname);
         await this.surnameLocator.fill(lastname);
         await this.emailLocator.fill(email);

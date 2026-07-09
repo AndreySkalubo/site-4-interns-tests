@@ -9,5 +9,9 @@ export const testConfigProducts = {
         "price": Math.floor(Math.random() * 3000) + 3000,
         "urlImage": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=500",
         "category": "ELECTRONICS"
+    },
+    testWarehouse: {
+        "name": faker.company.name(),
+        "address": faker.location.streetAddress()
     }
 };

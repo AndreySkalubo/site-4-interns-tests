@@ -41,13 +41,13 @@ export class AdminPanel {
         const lastDeleteButton = deleteButtons.last();
         await lastDeleteButton.click();
     }
-    async fillProductForm(name, description, price, imagePath) {
+    async fillProductForm({ name, description, price, urlImage }) {
         await this.page.getByLabel('Название').fill(name);
         await this.page.getByLabel('Описание').fill(description);
-        await this.page.getByLabel('Цена (руб.)').fill(price);
-        await this.page.getByLabel('URL Изображения').fill(imagePath);
+        await this.page.getByLabel('Цена (руб.)').fill(String(price));
+        await this.page.getByLabel('URL Изображения').fill(urlImage);
     }
-    async fillWarehouseForm(name, address) {
+    async fillWarehouseForm({ name, address }) {
         await this.page.getByLabel('Название').fill(name);
         await this.page.getByLabel('Адрес').fill(address);
     }
