@@ -20,7 +20,7 @@ export const testConfigCredentials = {
         "password": "user123"
     },
     emptyPassword: {
-        "email": "non-existent@gmail.com",
+        "email": "user1@test.com",
         "password": null
     },
     emptyEmail: {
