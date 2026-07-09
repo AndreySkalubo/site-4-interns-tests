@@ -1,70 +1,73 @@
 import { test } from "@playwright/test";
 import { testConfigCredentials } from "../src/config/test-config-credentials";
-import { postData } from "../src/api/login-function";
-import { loginURL, registrationURL } from "../src/config/test-config-urls";
+import { createData, deleteData, readData, updateData } from "../src/api/crud-functions";
+import { urls } from "../src/config/test-config-urls";
 import { faker } from "@faker-js/faker";
 import { createValidRegistrationData } from "../src/helpers/credentials-payload";
 import { ProductService } from "../src/api/product-service";
 import { testConfigProducts } from "../src/config/test-config-products";
 import { giveRandomItemId } from "../src/helpers/give-random-item-id";
+import { UserMenuService } from "../src/api/admin-service";
 
 test.describe('Authentication tests', () => {
 
     test('Login test admin', async ({ request }) => {
         //201 Created
-        await postData(request, loginURL, testConfigCredentials.admin, 201);
+        await createData(request, urls.loginURL, testConfigCredentials.admin, 201);
     });
 
     test('Login test user1', async ({ request }) => {
         //201 Created
-        await postData(request, loginURL, testConfigCredentials.user1, 201);
+        await createData(request, urls.loginURL, testConfigCredentials.user1, 201);
     });
 
     test('Login test bad email', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.user1BadData, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.user1BadData, 400);
     });
 
     test('Login test non-existent email', async ({ request }) => {
         //401 Unauthorized
-        await postData(request, loginURL, testConfigCredentials.nonExistentData, 401);
+        await createData(request, urls.loginURL, testConfigCredentials.nonExistentData, 401);
     });
 
     test('Login test empty password', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.emptyPassword, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.emptyPassword, 400);
     });
 
     test('Login test empty email', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.emptyEmail, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.emptyEmail, 400);
     });
 
     test('Login test empty email and password', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.emptyLoginData, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.emptyLoginData, 400);
     });
 
     test('SQL injection #1', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.sqlInjection, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.sqlInjection, 400);
     });
+
     test('SQL injection #2', async ({ request }) => {
         //400 Bad Request
-        await postData(request, loginURL, testConfigCredentials.sqlInjection, 400);
+        await createData(request, urls.loginURL, testConfigCredentials.sqlInjection, 400);
     });
+
 });
 
 test.describe('Registration tests', () => {
 
     test('Registration test', async ({ request }) => {
-        await postData(request, registrationURL, createValidRegistrationData(), 201);
+        await createData(request, urls.registrationURL, createValidRegistrationData(), 201);
     });
 
     test('Registration test temp mail', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 email: faker.internet.email({ provider: 'gmeenramy.com' })
@@ -74,9 +77,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test incorrect phone number format', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 phoneNumber: faker.phone.number()
@@ -86,9 +89,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test incorrect email', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 email: faker.internet.email({ provider: null })
@@ -98,9 +101,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty first name', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 firstname: null
@@ -110,9 +113,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty last name', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 lastname: null
@@ -122,9 +125,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty email', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 email: null
@@ -134,9 +137,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty username', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 username: null
@@ -146,9 +149,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty phone number', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 phoneNumber: null
@@ -158,9 +161,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty password', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 password: null
@@ -170,9 +173,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test empty role', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 role: null
@@ -182,9 +185,9 @@ test.describe('Registration tests', () => {
     });
 
     test('Registration test existing mail', async ({ request }) => {
-        await postData(
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
                 email: testConfigCredentials.existingUser.email
@@ -192,26 +195,26 @@ test.describe('Registration tests', () => {
             409
         );
     });
-    //The system allows creating a user with existing username
-    test('Registration test existing username', async ({ request }) => {
-        await postData(
+    //The system throws 500 Internal Server Error when trying to create a user with existing username
+    test.fail('Registration test existing username', async ({ request }) => {
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
-                email: testConfigCredentials.existingUser.username
+                username: testConfigCredentials.existingUser.username
             },
             400
         );
     });
     //The system allows creating a user with existing phone number
-    test('Registration test existing phone number', async ({ request }) => {
-        await postData(
+    test.fail('Registration test existing phone number', async ({ request }) => {
+        await createData(
             request,
-            registrationURL,
+            urls.registrationURL,
             {
                 ...createValidRegistrationData(),
-                email: testConfigCredentials.existingUser.phoneNumber
+                phoneNumber: testConfigCredentials.existingUser.phoneNumber
             },
             400
         );
@@ -220,17 +223,14 @@ test.describe('Registration tests', () => {
 
 test.describe('Product tests', () => {
 
-    // test.beforeEach(async ({ request }) => {
-    //     await postData(request, loginURL, testConfigCredentials.user1, 201);
-    // });
+    test.describe.configure({ mode: 'serial' });
 
     test('Add and delete product', async ({ request }) => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId();
         await productService.addProductToBucket(randomItem, 201);
-        await setTimeout(async () => {
-            await productService.removeProductFromBucket(randomItem, 200);
-        }, 200);
+
+        await productService.removeProductFromBucket(randomItem, 200);
 
     });
 
@@ -279,5 +279,41 @@ test.describe('Product tests', () => {
 });
 
 test.describe('Admin panel tests', () => {
+
+    test('Open admin product menu', async ({ request }) => {
+        const userMenuService = new UserMenuService(request);
+        await userMenuService.openMenu(urls.adminProductURL, 200);
+    });
+
+    test('Open admin warehouse menu', async ({ request }) => {
+        const userMenuService = new UserMenuService(request);
+        await userMenuService.openMenu(urls.adminWarehouseURL, 200);
+    });
+
+    test('Open admin order menu', async ({ request }) => {
+        const userMenuService = new UserMenuService(request);
+        await userMenuService.openMenu(urls.adminOrderURL, 200);
+    });
+
+    test('Create and delete product', async ({ request }) => {
+        const createdProduct = await createData(request, urls.adminProductURL, testConfigProducts.testProduct, 201);
+        const createdProductJson = await createdProduct.json();
+        await deleteData(request, urls.adminProductURL, createdProductJson.id, 200);
+    });
+
+    test('Update product', async ({ request }) => {
+        const randomProductId = giveRandomItemId();
+        const getRandomProduct = await readData(request, urls.adminProductURL, randomProductId, 200);
+        const randomProductJson = await getRandomProduct.json();
+        delete randomProductJson.id;
+        //The system sends out product data in all strings but only accepts price as number
+        const payload = {
+            ...randomProductJson,
+            price: Number(randomProductJson.price)
+        };
+        await updateData(request, urls.adminProductURL, randomProductId, payload, 200);
+
+    });
+
 
 });

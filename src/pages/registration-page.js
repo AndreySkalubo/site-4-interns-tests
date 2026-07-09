@@ -1,5 +1,3 @@
-import { expect, Locator, Page } from '@playwright/test';
-
 export class RegistrationPage {
     constructor(page) {
         this.page = page;
@@ -13,12 +11,12 @@ export class RegistrationPage {
         this.loginRedirectButtonLocator = page.getByRole('link', { name: 'Войти' });
     }
 
-    async register(name, surname, email, username, phone, password) {
-        await this.nameLocator.fill(name);
-        await this.surnameLocator.fill(surname);
+    async register(firstname, lastname, email, username, phoneNumber, password) {
+        await this.nameLocator.fill(firstname);
+        await this.surnameLocator.fill(lastname);
         await this.emailLocator.fill(email);
         await this.usernameLocator.fill(username);
-        await this.phoneLocator.fill(phone);
+        await this.phoneLocator.fill(phoneNumber);
         await this.passwordLocator.fill(password);
         await this.registerButtonLocator.click();
     }

@@ -12,6 +12,7 @@ import { OrdersPage } from "../src/pages/orders-page.js";
 import { ProfilePage } from "../src/pages/profile-page.js";
 import { validateProduct, validateProductDeleted } from "../src/helpers/validate-product.js";
 import { testConfigCredentials } from '../src/config/test-config-credentials.js';
+import { urls } from "../src/config/test-config-urls";
 
 //Добавить комментарии!!
 
@@ -22,7 +23,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login(testConfigCredentials.admin.email, testConfigCredentials.admin.password);
-        await page.waitForURL('http://localhost:5173/');
+        await page.waitForURL(urls.baseURL);
 
     });
 
@@ -32,7 +33,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login(testConfigCredentials.user1.email, testConfigCredentials.user1.password);
-        await page.waitForURL('http://localhost:5173/');
+        await page.waitForURL(urls.baseURL);
 
     });
 
@@ -42,7 +43,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login(testConfigCredentials.user1BadData.email, testConfigCredentials.user1BadData.password);
-        await expect(page).not.toHaveURL('http://localhost:5173/');
+        await expect(page).not.toHaveURL(urls.baseURL);
 
     });
 
@@ -52,7 +53,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login(testConfigCredentials.user1.email, '');
-        await expect(page).not.toHaveURL('http://localhost:5173/');
+        await expect(page).not.toHaveURL(urls.baseURL);
 
     });
 
@@ -62,7 +63,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login('', testConfigCredentials.user1.password);
-        await expect(page).not.toHaveURL('http://localhost:5173/');
+        await expect(page).not.toHaveURL(urls.baseURL);
 
     });
 
@@ -72,7 +73,7 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login('', '');
-        await expect(page).not.toHaveURL('http://localhost:5173/');
+        await expect(page).not.toHaveURL(urls.baseURL);
     });
 
     test('correct data registration', async ({ page }) => {
@@ -226,6 +227,7 @@ test.describe('Login page tests', () => {
 });
 
 test.describe('Catalogue and product tests', () => {
+    test.describe.configure({ mode: 'serial' });
 
     test('add products to cart', async ({ page }) => {
 

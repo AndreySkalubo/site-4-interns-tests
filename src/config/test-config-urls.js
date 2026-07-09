@@ -1,7 +1,13 @@
 const baseURL = 'http://localhost:5173';
-export const loginURL = `${baseURL}/api/auth/login`;
-export const registrationURL = `${baseURL}/api/auth/register`;
-export const addProductToBucketURL = `${baseURL}/api/bucket/1/addProduct`;
-export const removeProductFromBucketURL = `${baseURL}/api/bucket/1/removeProduct`;
-export const getProductURL = `${baseURL}/api/product/`;
-export const makeOrderURL = `${baseURL}/api/order/1`;
+export const urls = {
+    baseURL: baseURL,
+    loginURL: `${baseURL}/api/auth/login`,
+    registrationURL: `${baseURL}/api/auth/register`,
+    addProductToBucketURL: `${baseURL}/api/bucket/1/addProduct`,
+    removeProductFromBucketURL: `${baseURL}/api/bucket/1/removeProduct`,
+    getProductURL: `${baseURL}/api/product/`,
+    makeOrderURL: `${baseURL}/api/order/1`,
+    adminProductURL: `${baseURL}/api/product`,
+    adminWarehouseURL: `${baseURL}/api/warehouse`,
+    adminOrderURL: `${baseURL}/api/order`
+};
