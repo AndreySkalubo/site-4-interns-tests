@@ -11,7 +11,7 @@ import { OrdersPage } from "../src/pages/orders-page.js";
 import { ProfilePage } from "../src/pages/profile-page.js";
 import { validateProduct, validateProductDeleted } from "../src/helpers/validate-product.js";
 import { testConfigCredentials } from '../src/config/test-config-credentials.js';
-import { urls } from "../src/config/test-config-urls";
+import { urls } from "../src/config/test-config-urls.js";
 import { createValidRegistrationData } from '../src/helpers/credentials-payload.js';
 import { testConfigProducts } from '../src/config/test-config-products.js';
 
@@ -114,7 +114,7 @@ test.describe('Login page tests', () => {
         const registrationPage = new RegistrationPage(page);
         await registrationPage.register({
             ...createValidRegistrationData(),
-            email: faker.internet.email({ provider: null })
+            email: faker.internet.email({ provider: "" })
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
     });
@@ -369,13 +369,14 @@ test.describe('Admin panel tests', () => {
         const adminPanel = new AdminPanel(page);
         await adminPanel.goToProductMenu();
         await adminPanel.clickAddProductButton();
-        const deletableProduct = { ...testConfigProducts.testProduct, name: 'Deletable Product' };
+        const deletableProductID = Math.random();
+        const deletableProduct = { ...testConfigProducts.testProduct, name: `Deletable Product # ${deletableProductID}`};
         await adminPanel.fillProductForm(deletableProduct);
         await adminPanel.clickSaveButton();
         await adminPanel.clickProductDeleteButton();
 
         await adminPanel.returnToCatalogue();
-        await validateProductDeleted(deletableProduct, page);
+        await validateProductDeleted(deletableProduct.name, page);
     });
     test('create warehouse', async ({ page }) => {
         const loginPage = new LoginPage(page);

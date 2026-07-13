@@ -1,6 +1,12 @@
 import { faker } from '@faker-js/faker';
 
 export class Credentials {
+    name: string;
+    surname: string;
+    email: string;
+    username: string;
+    phone: string;
+    password: string;
     constructor() {
         this.name = faker.person.firstName();
         this.surname = faker.person.lastName();

@@ -1,14 +1,16 @@
-import { expect } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class CataloguePage {
-    constructor(page) {
+    page: Page;
+    catalogueHeading: Locator;
+    constructor(page: Page) {
         this.page = page;
         this.catalogueHeading = page.getByRole('heading', { name: 'Каталог товаров' });
     }
 
-    async addProductsToCart(number) {
-        const addButtons = await this.page.getByRole('button', {
-            name: 'В корзину', type: 'button', exact: true
+    async addProductsToCart(number: number) {
+        const addButtons = this.page.getByRole('button', {
+            name: 'В корзину', exact: true
         });
         for (let i = 0; i < number; i++) {
             await addButtons.nth(i).click();
@@ -16,23 +18,20 @@ export class CataloguePage {
     }
 
     async openRandomProduct() {
-        const products = await this.page.getByRole('link', { name: 'В корзину' });
+        const products = this.page.getByRole('link', { name: 'В корзину' });
         const randomIndex = Math.floor(Math.random() * await products.count());
         await products.nth(randomIndex).click();
     }
 
     async validateImageLinks() {
         await this.page.waitForLoadState('networkidle');
-        const imageLinks = await this.page.getByRole('img');
+        const imageLinks = this.page.getByRole('img');
         console.log(`Found ${await imageLinks.count()} image links on the page.`);
         for (let i = 0; i < await imageLinks.count(); i++) {
             const imageUrl = await imageLinks.nth(i).getAttribute('src');
-            const imageResponse = await this.page.request.get(imageUrl);
+            const imageResponse = await this.page.request.get(String(imageUrl));
             expect(imageResponse.ok()).toBeTruthy();
         }
     }
-    // async validateProduct(productName) {
-    //     await expect(this.page.getByText(productName, { exact: true }).last()).toBeVisible();
-    // }
 
 }

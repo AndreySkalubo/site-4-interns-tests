@@ -1,5 +1,16 @@
+import { Locator, Page } from "@playwright/test";
+
 export class HeaderComponent {
-    constructor(page) {
+    page: Page;
+    returnButton: Locator;
+    adminPanelButton: Locator;
+    ordersButton: Locator;
+    cartButton: Locator;
+    profileDropdown: Locator;
+    profileButton: Locator;
+    orderHistoryButton: Locator;
+    exitButton: Locator;
+    constructor(page: Page) {
         this.page = page;
         this.returnButton = page.getByRole('link', { name: 'Shop System' });
         this.adminPanelButton = page.getByRole('link', { name: 'Панель' });

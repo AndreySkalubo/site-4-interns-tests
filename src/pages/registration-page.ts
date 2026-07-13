@@ -1,5 +1,17 @@
+import { Locator, Page } from "@playwright/test";
+import { LoginPage } from "./login-page";
+
 export class RegistrationPage {
-    constructor(page) {
+    page: Page;
+    nameLocator: Locator;
+    surnameLocator: Locator;
+    emailLocator: Locator;
+    usernameLocator: Locator;
+    phoneLocator: Locator;
+    passwordLocator: Locator;
+    registerButtonLocator: Locator;
+    loginRedirectButtonLocator: Locator;
+    constructor(page: Page) {
         this.page = page;
         this.nameLocator = page.getByRole('textbox', { name: 'Имя' });
         this.surnameLocator = page.getByRole('textbox', { name: 'Фамилия' });
@@ -11,7 +23,14 @@ export class RegistrationPage {
         this.loginRedirectButtonLocator = page.getByRole('link', { name: 'Войти' });
     }
 
-    async register({ firstname, lastname, email, username, phoneNumber, password }) {
+    async register({ firstname, lastname, email, username, phoneNumber, password }: {
+        firstname: string;
+        lastname: string;
+        email: string;
+        username: string;
+        phoneNumber: string;
+        password: string;
+    }) {
         await this.nameLocator.fill(firstname);
         await this.surnameLocator.fill(lastname);
         await this.emailLocator.fill(email);
@@ -21,11 +40,11 @@ export class RegistrationPage {
         await this.registerButtonLocator.click();
     }
 
-    async verifyRegistrationSuccess(loginPage) {
+    async verifyRegistrationSuccess(loginPage: LoginPage) {
         await loginPage.successfulRegistrationMessageLocator.waitFor({ state: 'attached' });
     }
 
-    async verifyRegistrationFailure(loginPage) {
+    async verifyRegistrationFailure(loginPage: LoginPage) {
         await loginPage.successfulRegistrationMessageLocator.waitFor({ state: 'detached' });
     }
 }

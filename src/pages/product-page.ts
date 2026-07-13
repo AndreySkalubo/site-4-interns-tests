@@ -1,5 +1,8 @@
+import { Page } from "@playwright/test";
+
 export class ProductPage {
-    constructor(page) {
+    page: Page;
+    constructor(page: Page) {
         this.page = page;
     }
     isProductPageOpened() {
