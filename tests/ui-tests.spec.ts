@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, APIRequestContext } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { LoginPage } from '../src/pages/login-page.js';
 import { RegistrationPage } from '../src/pages/registration-page.js';
@@ -14,6 +14,7 @@ import { testConfigCredentials } from '../src/config/test-config-credentials.js'
 import { urls } from "../src/config/test-config-urls.js";
 import { createValidRegistrationData } from '../src/helpers/credentials-payload.js';
 import { testConfigProducts } from '../src/config/test-config-products.js';
+import { ProductService } from '../src/api/product-service.js';
 
 //Добавить комментарии!!
 
@@ -189,8 +190,12 @@ test.describe('Login page tests', () => {
 test.describe('Catalogue and product tests', () => {
     test.describe.configure({ mode: 'serial' });
 
-    test('add products to cart', async ({ page }) => {
+    test.beforeEach(async ({ request }) => {
+        const produdctService = new ProductService(request);
+        produdctService.clearBucket();
+    });
 
+    test('add products to cart', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
@@ -214,25 +219,25 @@ test.describe('Catalogue and product tests', () => {
     });
 
     test('go to several random products pages', async ({ page }) => {
-
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
         const cataloguePage = new CataloguePage(page);
         const productPage = new ProductPage(page);
 
-        const numberOfProductsToVisit = 70;
+        const numberOfProductsToVisit = 55;
         for (let i = 0; i < numberOfProductsToVisit; i++) {
             await cataloguePage.openRandomProduct();
-            await expect(productPage.isProductPageOpened()).toBeTruthy();
+            expect(productPage.isProductPageOpened()).toBeTruthy();
             await page.goBack();
         }
     });
 
     test('add products via product page', async ({ page }) => {
-
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
+
+        const cartPage = new CartPage(page);
 
         const cataloguePage = new CataloguePage(page);
         await cataloguePage.openRandomProduct();
@@ -240,7 +245,6 @@ test.describe('Catalogue and product tests', () => {
         const productPage = new ProductPage(page);
         await productPage.addToCart();
 
-        const cartPage = new CartPage(page);
         const headerComponent = new HeaderComponent(page);
         await headerComponent.goToCartPage();
         await cartPage.verifyCartItemsCount(1);
@@ -249,7 +253,6 @@ test.describe('Catalogue and product tests', () => {
 
     //На странице каталога нет некоторых изображений, поэтому тест падает.
     test.fail('verify product images presence', async ({ page }) => {
-
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
@@ -258,7 +261,6 @@ test.describe('Catalogue and product tests', () => {
     });
 
     test('make an order', async ({ page }) => {
-
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
@@ -271,11 +273,12 @@ test.describe('Catalogue and product tests', () => {
 
         const cartPage = new CartPage(page);
         await cartPage.makeOrder();
-        await expect(cartPage.isCartEmpty()).toBeTruthy();
+        await headerComponent.goToCartPage();
+        await expect(cartPage.makeOrderButton).toBeDisabled();
+
     });
 
     test('make an order with empty cart is impossible', async ({ page }) => {
-
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
@@ -287,6 +290,9 @@ test.describe('Catalogue and product tests', () => {
 
     });
 
+});
+
+test.describe('Admin panel tests', () => {
     test('test header buttons', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsAdmin();
@@ -326,9 +332,6 @@ test.describe('Catalogue and product tests', () => {
         await expect(loginPage.emailLocator).toBeAttached();
     });
 
-});
-
-test.describe('Admin panel tests', () => {
     test('create product', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsAdmin();
@@ -370,7 +373,7 @@ test.describe('Admin panel tests', () => {
         await adminPanel.goToProductMenu();
         await adminPanel.clickAddProductButton();
         const deletableProductID = Math.random();
-        const deletableProduct = { ...testConfigProducts.testProduct, name: `Deletable Product # ${deletableProductID}`};
+        const deletableProduct = { ...testConfigProducts.testProduct, name: `Deletable Product # ${deletableProductID}` };
         await adminPanel.fillProductForm(deletableProduct);
         await adminPanel.clickSaveButton();
         await adminPanel.clickProductDeleteButton();

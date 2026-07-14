@@ -9,7 +9,14 @@ import { testConfigProducts } from "../src/config/test-config-products";
 import { giveRandomItemId } from "../src/helpers/give-random-item-id";
 import { UserMenuService } from "../src/api/admin-service";
 import { testConfigOrders } from "../src/config/test-config-orders";
-
+type product = {
+    id?: number,
+    name: string,
+    description: string,
+    price: string,
+    category: string,
+    urlImage: string;
+};
 
 test.describe('Authentication tests', () => {
 
@@ -75,6 +82,8 @@ test.describe('Registration tests', () => {
         const response = await createData(request, urls.registrationURL, createValidRegistrationData());
         expect(response.status()).toBe(201);
     });
+
+
 
     test('Registration test temp mail', async ({ request }) => {
         const response = await createData(
@@ -292,7 +301,8 @@ test.describe('Admin panel tests', () => {
     test('Create and delete product', async ({ request }) => {
         const createdProductResponse = await createData(request, urls.adminProductURL, testConfigProducts.testProduct);
         expect(createdProductResponse.status()).toBe(201);
-        const createdProductJson = await createdProductResponse.json();
+        const createdProductJson: Required<product> = await createdProductResponse.json();
+        console.log(createdProductJson);
         const response = await deleteData(request, urls.adminProductURL, createdProductJson.id);
         expect(response.status()).toBe(200);
     });
@@ -301,7 +311,7 @@ test.describe('Admin panel tests', () => {
         const randomProductId = giveRandomItemId();
         const getRandomProduct = await readData(request, urls.adminProductURL, randomProductId);
         expect(getRandomProduct.status()).toBe(200);
-        const randomProductJson = await getRandomProduct.json();
+        const randomProductJson: product = await getRandomProduct.json();
         delete randomProductJson.id;
         //The system sends out product data in all strings but only accepts price as number
         const payload = {
@@ -310,7 +320,6 @@ test.describe('Admin panel tests', () => {
         };
         const response = await updateData(request, urls.adminProductURL, randomProductId, payload);
         expect(response.status()).toBe(200);
-
 
     });
 

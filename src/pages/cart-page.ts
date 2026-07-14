@@ -1,8 +1,8 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class CartPage {
-    page: Page;
-    makeOrderButton: Locator;
+    readonly page: Page;
+    readonly makeOrderButton: Locator;
     constructor(page: Page) {
         this.page = page;
         this.makeOrderButton = page.getByRole('button', { name: 'Оформить заказ' });

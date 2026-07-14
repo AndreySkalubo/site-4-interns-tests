@@ -20,4 +20,4 @@ export const testConfigOrders = {
     testEmptyOrder: {
         "items": []
     }
-};
+} as const;

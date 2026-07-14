@@ -1,13 +1,13 @@
 import { Locator, Page } from "@playwright/test";
 
 export class AdminPanel {
-    page: Page;
-    returnBackButton: Locator;
-    productMenuButton: Locator;
-    warehouseMenuButton: Locator;
-    addProductButton: Locator;
-    saveButton: Locator;
-    addWarehouseButton: Locator;
+    readonly page: Page;
+    readonly returnBackButton: Locator;
+    readonly productMenuButton: Locator;
+    readonly warehouseMenuButton: Locator;
+    readonly addProductButton: Locator;
+    readonly saveButton: Locator;
+    readonly addWarehouseButton: Locator;
     constructor(page: Page) {
         this.page = page;
         this.returnBackButton = page.getByRole('link', { name: 'Админ-панель' });
@@ -36,12 +36,12 @@ export class AdminPanel {
         await this.addWarehouseButton.click();
     }
     async clickEditLastProductButton() {
-        const editButtons = await this.page.getByRole('button', { name: 'Редакт.' }).last();
+        const editButtons = this.page.getByRole('button', { name: 'Редакт.' }).last();
         const lastEditButton = editButtons.last();
         await lastEditButton.click();
     }
     async clickProductDeleteButton() {
-        const deleteButtons = await this.page.getByRole('button', { name: 'Удалить' });
+        const deleteButtons = this.page.getByRole('button', { name: 'Удалить' });
         const lastDeleteButton = deleteButtons.last();
         await lastDeleteButton.click();
     }

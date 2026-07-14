@@ -1,12 +1,12 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class LoginPage {
-    page: Page;
-    emailLocator: Locator;
-    passwordLocator: Locator;
-    loginButtonLocator: Locator;
-    registrationButtonLocator: Locator;
-    successfulRegistrationMessageLocator: Locator;
+    readonly page: Page;
+    readonly emailLocator: Locator;
+    readonly passwordLocator: Locator;
+    readonly loginButtonLocator: Locator;
+    readonly registrationButtonLocator: Locator;
+    readonly successfulRegistrationMessageLocator: Locator;
     constructor(page: Page) {
         this.page = page;
         this.emailLocator = page.getByRole('textbox', { name: 'Email' });

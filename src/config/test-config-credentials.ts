@@ -48,4 +48,4 @@ export const testConfigCredentials = {
         "password": "user123",
         "role": "USER"
     }
-};
+} as const;

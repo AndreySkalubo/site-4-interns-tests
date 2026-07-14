@@ -14,4 +14,4 @@ export const testConfigProducts = {
         "name": faker.company.name(),
         "address": faker.location.streetAddress()
     }
-};
+} as const;

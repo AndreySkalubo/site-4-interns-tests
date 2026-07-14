@@ -2,15 +2,15 @@ import { Locator, Page } from "@playwright/test";
 import { LoginPage } from "./login-page";
 
 export class RegistrationPage {
-    page: Page;
-    nameLocator: Locator;
-    surnameLocator: Locator;
-    emailLocator: Locator;
-    usernameLocator: Locator;
-    phoneLocator: Locator;
-    passwordLocator: Locator;
-    registerButtonLocator: Locator;
-    loginRedirectButtonLocator: Locator;
+    readonly page: Page;
+    readonly nameLocator: Locator;
+    readonly surnameLocator: Locator;
+    readonly emailLocator: Locator;
+    readonly usernameLocator: Locator;
+    readonly phoneLocator: Locator;
+    readonly passwordLocator: Locator;
+    readonly registerButtonLocator: Locator;
+    readonly loginRedirectButtonLocator: Locator;
     constructor(page: Page) {
         this.page = page;
         this.nameLocator = page.getByRole('textbox', { name: 'Имя' });

@@ -1,8 +1,8 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 export class CataloguePage {
-    page: Page;
-    catalogueHeading: Locator;
+    readonly page: Page;
+    readonly catalogueHeading: Locator;
     constructor(page: Page) {
         this.page = page;
         this.catalogueHeading = page.getByRole('heading', { name: 'Каталог товаров' });
