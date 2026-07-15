@@ -5,7 +5,7 @@ export const urls = {
     registrationURL: `${baseURL}/api/auth/register`,
     webRegistrationURL:`${baseURL}/register`,
     addProductToBucketURL: `${baseURL}/api/bucket/1/addProduct`,
-    removeProductFromBucketURL: `${baseURL}/api/bucket/2/removeProduct`,
+    removeProductFromBucketURL: `${baseURL}/api/bucket/1/removeProduct`,
     getProductURL: `${baseURL}/api/product/`,
     makeOrderURL: `${baseURL}/api/order/1`,
     adminProductURL: `${baseURL}/api/product`,

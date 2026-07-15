@@ -11,23 +11,23 @@ export class ProductService {
     constructor(request: APIRequestContext) {
         this.request = request;
     }
-    async addProductToBucket(id: number, expectedStatus: number) {
+    async addProductToBucket(id: number) {
         const response = await this.request.post(urls.addProductToBucketURL, { data: { "productId": id } });
-        expect(response.status()).toBe(expectedStatus);
+        return response;
     }
-    async removeProductFromBucket(id: number, expectedStatus: number) {
+    async removeProductFromBucket(id: number) {
         const response = await this.request.delete(urls.removeProductFromBucketURL, { data: { "productId": id } });
-        expect(response.status()).toBe(expectedStatus);
+        return response;
     }
-    async getProduct(id: number, expectedStatus: number) {
+    async getProduct(id: number) {
         const response = await this.request.get(`${urls.getProductURL}${id}`);
-        expect(response.status()).toBe(expectedStatus);
+        return response;
     }
-    async makeOrder(payload: object, expectedStatus: number) {
+    async makeOrder(payload: object) {
         const response = await this.request.post(urls.makeOrderURL, {
             data: payload
         });
-        expect(response.status()).toBe(expectedStatus);
+        return response;
     }
     async clearBucket() {
         const response = await this.request.get(urls.bucketURL);

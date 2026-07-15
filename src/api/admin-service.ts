@@ -1,12 +1,12 @@
 import { APIRequestContext, expect } from "@playwright/test";
 
 export class UserMenuService {
-    readonly request: APIRequestContext
+    readonly request: APIRequestContext;
     constructor(request: APIRequestContext) {
         this.request = request;
     }
-    async openMenu(url: string, expectedStatus: number) {
+    async openMenu(url: string) {
         const response = await this.request.get(url);
-        expect(response.status()).toBe(expectedStatus);
+        return response;
     }
 }

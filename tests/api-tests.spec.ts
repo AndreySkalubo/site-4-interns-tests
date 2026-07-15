@@ -9,69 +9,86 @@ import { testConfigProducts } from "../src/config/test-config-products";
 import { giveRandomItemId } from "../src/helpers/give-random-item-id";
 import { UserMenuService } from "../src/api/admin-service";
 import { testConfigOrders } from "../src/config/test-config-orders";
-type product = {
-    id?: number,
-    name: string,
-    description: string,
-    price: string,
-    category: string,
-    urlImage: string;
-};
+import { product, userLoginErrorBody, userAuthRespBody } from "../src/config/test-config-types";
 
 test.describe('Authentication tests', () => {
 
     test('Login test admin', async ({ request }) => {
         //201 Created
-        const response = await createData(request, urls.loginURL, testConfigCredentials.admin);
-        expect(response.status()).toBe(201);
+        const response =
+            await createData<userAuthRespBody>(request, urls.loginURL, testConfigCredentials.admin);
+        expect(response.status).toBe(201);
+        expect(response.body.email).toBe(testConfigCredentials.admin.email);
     });
 
     test('Login test user1', async ({ request }) => {
         //201 Created
-        const response = await createData(request, urls.loginURL, testConfigCredentials.user1);
-        expect(response.status()).toBe(201);
+        const response =
+            await createData<userAuthRespBody>(request, urls.loginURL, testConfigCredentials.user1);
+        expect(response.status).toBe(201);
+        expect(response.body.email).toBe(testConfigCredentials.user1.email);
     });
 
     test('Login test bad email', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.user1BadData);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.user1BadData);
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Bad Request');
+        expect(response.body.message).toStrictEqual(["email must be an email"]);
     });
 
     test('Login test non-existent email', async ({ request }) => {
         //401 Unauthorized
-        const response = await createData(request, urls.loginURL, testConfigCredentials.nonExistentData);
-        expect(response.status()).toBe(401);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.nonExistentData);
+        expect(response.status).toBe(401);
+        expect(response.body.error).toBe('Unauthorized');
+        expect(response.body.message).toStrictEqual("'Invalid email or password");
     });
 
     test('Login test empty password', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.emptyPassword);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.emptyPassword);
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Bad Request');
+        expect(response.body.message).toStrictEqual([
+            "password should not be empty",
+            "password must be a string"
+        ]);
     });
 
     test('Login test empty email', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.emptyEmail);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.emptyEmail);
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Bad Request');
+        expect(response.body.message).toStrictEqual(["email must be an email"]);
     });
 
     test('Login test empty email and password', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.emptyLoginData);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.emptyLoginData);
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Bad Request');
+        expect(response.body.message).toStrictEqual(["email must be an email"]);
     });
 
     test('SQL injection #1', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.sqlInjection);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.sqlInjection);
+        expect(response.status).toBe(400);
     });
 
     test('SQL injection #2', async ({ request }) => {
         //400 Bad Request
-        const response = await createData(request, urls.loginURL, testConfigCredentials.sqlInjection);
-        expect(response.status()).toBe(400);
+        const response =
+            await createData<userLoginErrorBody>(request, urls.loginURL, testConfigCredentials.sqlInjection2);
+        expect(response.status).toBe(400);
     });
 
 });
@@ -79,8 +96,9 @@ test.describe('Authentication tests', () => {
 test.describe('Registration tests', () => {
 
     test('Registration test', async ({ request }) => {
-        const response = await createData(request, urls.registrationURL, createValidRegistrationData());
-        expect(response.status()).toBe(201);
+        const response =
+            await createData<userAuthRespBody>(request, urls.registrationURL, createValidRegistrationData());
+        expect(response.status).toBe(201);
     });
 
 
@@ -94,7 +112,7 @@ test.describe('Registration tests', () => {
                 email: faker.internet.email({ provider: 'gmeenramy.com' })
             }
         );
-        expect(response.status()).toBe(201);
+        expect(response.status).toBe(201);
     });
 
     test('Registration test incorrect phone number format', async ({ request }) => {
@@ -106,7 +124,7 @@ test.describe('Registration tests', () => {
                 phoneNumber: faker.phone.number()
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test incorrect email', async ({ request }) => {
@@ -118,7 +136,7 @@ test.describe('Registration tests', () => {
                 email: faker.internet.email({ provider: "" })
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty first name', async ({ request }) => {
@@ -130,7 +148,7 @@ test.describe('Registration tests', () => {
                 firstname: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty last name', async ({ request }) => {
@@ -142,7 +160,7 @@ test.describe('Registration tests', () => {
                 lastname: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty email', async ({ request }) => {
@@ -154,7 +172,7 @@ test.describe('Registration tests', () => {
                 email: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty username', async ({ request }) => {
@@ -166,7 +184,7 @@ test.describe('Registration tests', () => {
                 username: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty phone number', async ({ request }) => {
@@ -178,7 +196,7 @@ test.describe('Registration tests', () => {
                 phoneNumber: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty password', async ({ request }) => {
@@ -190,7 +208,7 @@ test.describe('Registration tests', () => {
                 password: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test empty role', async ({ request }) => {
@@ -202,7 +220,7 @@ test.describe('Registration tests', () => {
                 role: null
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 
     test('Registration test existing mail', async ({ request }) => {
@@ -214,7 +232,7 @@ test.describe('Registration tests', () => {
                 email: testConfigCredentials.existingUser.email
             }
         );
-        expect(response.status()).toBe(409);
+        expect(response.status).toBe(409);
     });
     //The system throws 500 Internal Server Error when trying to create a user with existing username
     test.fail('Registration test existing username', async ({ request }) => {
@@ -226,7 +244,7 @@ test.describe('Registration tests', () => {
                 username: testConfigCredentials.existingUser.username
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
     //The system allows creating a user with existing phone number
     test.fail('Registration test existing phone number', async ({ request }) => {
@@ -238,7 +256,7 @@ test.describe('Registration tests', () => {
                 phoneNumber: testConfigCredentials.existingUser.phoneNumber
             }
         );
-        expect(response.status()).toBe(400);
+        expect(response.status).toBe(400);
     });
 });
 
@@ -249,34 +267,39 @@ test.describe('Product tests', () => {
     test('Add and delete product', async ({ request }) => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId();
-        await productService.addProductToBucket(randomItem, 201);
+        const addResp = await productService.addProductToBucket(randomItem);
+        expect(addResp.status()).toBe(201);
 
-        await productService.removeProductFromBucket(randomItem, 200);
+        const removeResp = await productService.removeProductFromBucket(randomItem);
+        expect(removeResp.status()).toBe(200);
 
     });
 
     test('Get product', async ({ request }) => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId();
-        await productService.getProduct(randomItem, 200);
+        const resp = await productService.getProduct(randomItem);
+        expect(resp.status()).toBe(200);
     });
 
     test('Get non-existent product', async ({ request }) => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId() - testConfigProducts.firstProductEntryID;
-        await productService.getProduct(randomItem, 404);
+        const resp = await productService.getProduct(randomItem);
+        expect(resp.status()).toBe(404);
     });
 
     test('Make an order', async ({ request }) => {
         const productService = new ProductService(request);
-        await productService.makeOrder(testConfigOrders.testOrder, 201);
+        const resp = await productService.makeOrder(testConfigOrders.testOrder);
+        expect(resp.status()).toBe(201);
     });
     //You are able to send out an empty array of items and create an empty order,
     //which shouldn't be the case
     test.fail('Make an order with empty array of items', async ({ request }) => {
         const productService = new ProductService(request);
-
-        await productService.makeOrder(testConfigOrders.testEmptyOrder, 400);
+        const resp = await productService.makeOrder(testConfigOrders.testEmptyOrder);
+        expect(resp.status()).toBe(400);
     });
 
 });
@@ -285,33 +308,36 @@ test.describe('Admin panel tests', () => {
 
     test('Open admin product menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
-        await userMenuService.openMenu(urls.adminProductURL, 200);
+        const resp = await userMenuService.openMenu(urls.adminProductURL);
+        expect(resp.status()).toBe(200);
     });
 
     test('Open admin warehouse menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
-        await userMenuService.openMenu(urls.adminWarehouseURL, 200);
+        const resp = await userMenuService.openMenu(urls.adminWarehouseURL);
+        expect(resp.status()).toBe(200);
     });
 
     test('Open admin order menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
-        await userMenuService.openMenu(urls.adminOrderURL, 200);
+        const resp = await userMenuService.openMenu(urls.adminOrderURL);
+        expect(resp.status()).toBe(200);
     });
 
     test('Create and delete product', async ({ request }) => {
-        const createdProductResponse = await createData(request, urls.adminProductURL, testConfigProducts.testProduct);
-        expect(createdProductResponse.status()).toBe(201);
-        const createdProductJson: Required<product> = await createdProductResponse.json();
-        console.log(createdProductJson);
+        const createdProductResponse = await createData<Required<product>>(request, urls.adminProductURL, testConfigProducts.testProduct);
+        console.log(createdProductResponse.body);
+        expect(createdProductResponse.status).toBe(201);
+        const createdProductJson: Required<product> = createdProductResponse.body;
         const response = await deleteData(request, urls.adminProductURL, createdProductJson.id);
-        expect(response.status()).toBe(200);
+        expect(response.status).toBe(200);
     });
 
     test('Update product', async ({ request }) => {
         const randomProductId = giveRandomItemId();
-        const getRandomProduct = await readData(request, urls.adminProductURL, randomProductId);
-        expect(getRandomProduct.status()).toBe(200);
-        const randomProductJson: product = await getRandomProduct.json();
+        const getRandomProduct = await readData<product>(request, urls.adminProductURL, randomProductId);
+        expect(getRandomProduct.status).toBe(200);
+        const randomProductJson: product = getRandomProduct.body;
         delete randomProductJson.id;
         //The system sends out product data in all strings but only accepts price as number
         const payload = {
@@ -319,7 +345,7 @@ test.describe('Admin panel tests', () => {
             price: Number(randomProductJson.price)
         };
         const response = await updateData(request, urls.adminProductURL, randomProductId, payload);
-        expect(response.status()).toBe(200);
+        expect(response.status).toBe(200);
 
     });
 
