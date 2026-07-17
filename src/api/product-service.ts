@@ -1,5 +1,6 @@
-import { APIRequestContext, APIResponse, expect } from "@playwright/test";
+import { APIRequestContext } from "@playwright/test";
 import { urls } from "../config/test-config-urls";
+import { createData, updateData, readData, deleteData } from "./crud-functions";
 type bucketProduct = {
     product_id: number,
     bucket_id: number,
@@ -13,22 +14,42 @@ export class ProductService {
     }
     async addProductToBucket(id: number) {
         const response = await this.request.post(urls.addProductToBucketURL, { data: { "productId": id } });
-        return response;
+        return {
+            status: response.status(),
+            ok: response.ok(),
+            body: await response.json()
+        };
     }
+
     async removeProductFromBucket(id: number) {
         const response = await this.request.delete(urls.removeProductFromBucketURL, { data: { "productId": id } });
-        return response;
+        return {
+            status: response.status(),
+            ok: response.ok(),
+            body: await response.json()
+        };
     }
+
     async getProduct(id: number) {
         const response = await this.request.get(`${urls.getProductURL}${id}`);
-        return response;
+        return {
+            status: response.status(),
+            ok: response.ok(),
+            body: await response.json()
+        };
     }
+
     async makeOrder(payload: object) {
         const response = await this.request.post(urls.makeOrderURL, {
             data: payload
         });
-        return response;
+        return {
+            status: response.status(),
+            ok: response.ok(),
+            body: await response.json()
+        };
     }
+
     async clearBucket() {
         const response = await this.request.get(urls.bucketURL);
         const responseJSON: { id: number, products: bucketProduct[]; } = await response.json();

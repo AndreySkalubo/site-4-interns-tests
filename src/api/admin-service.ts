@@ -7,6 +7,10 @@ export class UserMenuService {
     }
     async openMenu(url: string) {
         const response = await this.request.get(url);
-        return response;
+        return {
+            status: response.status(),
+            ok: response.ok(),
+            body: await response.json()
+        };
     }
 }
