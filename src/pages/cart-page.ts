@@ -15,7 +15,7 @@ export class CartPage {
         const removeButtons = this.page.getByRole('button', { name: 'Удалить' });
         const count = await removeButtons.count();
         for (let i = 0; i < count; i++) {
-            await removeButtons.first().click();
+            await removeButtons.nth(i).click();
         }
     }
     async makeOrder() {

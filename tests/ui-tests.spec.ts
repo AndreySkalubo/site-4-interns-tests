@@ -210,7 +210,6 @@ test.describe('Catalogue and product tests', () => {
         const cataloguePage = new CataloguePage(page);
         // const numberOfProductsToAdd = 5;
         const addedProductName = await cataloguePage.addRandProductToCart();
-        console.log(addedProductName);
 
         await headerComponent.goToCartPage();
 
