@@ -17,7 +17,7 @@ export class ProductService {
         return {
             status: response.status(),
             ok: response.ok(),
-            body: await response.json()
+            body: await response.json() as { [key: string]: unknown; }
         };
     }
 
@@ -26,7 +26,7 @@ export class ProductService {
         return {
             status: response.status(),
             ok: response.ok(),
-            body: await response.json()
+            body: await response.json() as { [key: string]: unknown; }
         };
     }
 
@@ -35,7 +35,7 @@ export class ProductService {
         return {
             status: response.status(),
             ok: response.ok(),
-            body: await response.json()
+            body: await response.json() as { [key: string]: unknown; }
         };
     }
 
@@ -46,7 +46,7 @@ export class ProductService {
         return {
             status: response.status(),
             ok: response.ok(),
-            body: await response.json()
+            body: await response.json() as { [key: string]: unknown; }
         };
     }
 

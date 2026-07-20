@@ -8,9 +8,8 @@ export class CartPage {
         this.makeOrderButton = page.getByRole('button', { name: 'Оформить заказ' });
     }
 
-    async verifyCartItemsCount(number: number) {
-        const cartItems = this.page.getByRole('button', { name: 'Удалить' });
-        await expect(cartItems).toHaveCount(number);
+    async verifyCartItem(string: string) {
+        await expect(this.page.getByText(string)).toBeVisible();
     }
     async removeAllItemsFromCart() {
         const removeButtons = this.page.getByRole('button', { name: 'Удалить' });

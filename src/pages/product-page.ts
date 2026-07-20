@@ -5,10 +5,11 @@ export class ProductPage {
     constructor(page: Page) {
         this.page = page;
     }
-    isProductPageOpened() {
+    async isProductPageOpened() {
         return this.page.getByRole('heading', { name: 'Описание' }).isVisible();
     }
-    addToCart() {
-        return this.page.getByRole('button', { name: 'Добавить в корзину' }).click();
+    async addToCart() {
+        await this.page.getByRole('button', { name: 'Добавить в корзину' }).click();
+        return this.page.getByRole('heading').first().innerText();
     }
 }

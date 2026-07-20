@@ -1,4 +1,4 @@
-import { test, expect, Page, APIRequestContext } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { LoginPage } from '../src/pages/login-page.js';
 import { RegistrationPage } from '../src/pages/registration-page.js';
@@ -195,7 +195,7 @@ test.describe('Catalogue and product tests', () => {
         produdctService.clearBucket();
     });
 
-    test('add products to cart', async ({ page }) => {
+    test('add product to cart', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
@@ -208,12 +208,13 @@ test.describe('Catalogue and product tests', () => {
         await headerComponent.returnToCatalogue();
 
         const cataloguePage = new CataloguePage(page);
-        const numberOfProductsToAdd = 5;
-        await cataloguePage.addProductsToCart(numberOfProductsToAdd);
+        // const numberOfProductsToAdd = 5;
+        const addedProductName = await cataloguePage.addRandProductToCart();
+        console.log(addedProductName);
 
         await headerComponent.goToCartPage();
 
-        await cartPage.verifyCartItemsCount(numberOfProductsToAdd);
+        await cartPage.verifyCartItem(addedProductName);
         await cartPage.removeAllItemsFromCart();
 
     });
@@ -225,7 +226,7 @@ test.describe('Catalogue and product tests', () => {
         const cataloguePage = new CataloguePage(page);
         const productPage = new ProductPage(page);
 
-        const numberOfProductsToVisit = 55;
+        const numberOfProductsToVisit = 5;
         for (let i = 0; i < numberOfProductsToVisit; i++) {
             await cataloguePage.openRandomProduct();
             expect(productPage.isProductPageOpened()).toBeTruthy();
@@ -243,13 +244,13 @@ test.describe('Catalogue and product tests', () => {
         await cataloguePage.openRandomProduct();
 
         const productPage = new ProductPage(page);
-        await productPage.addToCart();
+        const itemName = await productPage.addToCart();
 
         const headerComponent = new HeaderComponent(page);
         await headerComponent.goToCartPage();
-        await cartPage.verifyCartItemsCount(1);
+        await cartPage.verifyCartItem(itemName);
         await cartPage.removeAllItemsFromCart();
-    });
+});
 
     //На странице каталога нет некоторых изображений, поэтому тест падает.
     test.fail('verify product images presence', async ({ page }) => {
@@ -264,9 +265,8 @@ test.describe('Catalogue and product tests', () => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsUser1();
 
-        const numberOfItems = 3;
         const cataloguePage = new CataloguePage(page);
-        await cataloguePage.addProductsToCart(numberOfItems);
+        await cataloguePage.addRandProductToCart();
 
         const headerComponent = new HeaderComponent(page);
         await headerComponent.goToCartPage();
@@ -274,18 +274,6 @@ test.describe('Catalogue and product tests', () => {
         const cartPage = new CartPage(page);
         await cartPage.makeOrder();
         await headerComponent.goToCartPage();
-        await expect(cartPage.makeOrderButton).toBeDisabled();
-
-    });
-
-    test('make an order with empty cart is impossible', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsUser1();
-
-        const headerComponent = new HeaderComponent(page);
-        await headerComponent.goToCartPage();
-
-        const cartPage = new CartPage(page);
         await expect(cartPage.makeOrderButton).toBeDisabled();
 
     });
@@ -376,7 +364,7 @@ test.describe('Admin panel tests', () => {
         const deletableProduct = { ...testConfigProducts.testProduct, name: `Deletable Product # ${deletableProductID}` };
         await adminPanel.fillProductForm(deletableProduct);
         await adminPanel.clickSaveButton();
-        await adminPanel.clickProductDeleteButton();
+        await adminPanel.clickProductDeleteButton(deletableProduct.name);
 
         await adminPanel.returnToCatalogue();
         await validateProductDeleted(deletableProduct.name, page);

@@ -9,7 +9,6 @@ import { testConfigProducts } from "../src/config/test-config-products";
 import { giveRandomItemId } from "../src/helpers/give-random-item-id";
 import { UserMenuService } from "../src/api/admin-service";
 import { testConfigOrders } from "../src/config/test-config-orders";
-const { log } = console;
 
 test.describe('Authentication tests', () => {
 
@@ -124,7 +123,7 @@ test.describe('Registration tests', () => {
         //assert body to have validRegData properties without encrypted password
         const { password, ...regPasswordlessData } = validRegData;
         expect(response.body).toMatchObject(regPasswordlessData);
-        log(response);
+
     });
 
 
@@ -139,7 +138,7 @@ test.describe('Registration tests', () => {
         const { password, ...regPasswordlessData } = validRegData;
         expect(response.body).toMatchObject(regPasswordlessData);
         expect(response.ok).toBeTruthy();
-        log(response);
+
 
     });
 
@@ -157,7 +156,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['phoneNumber must be in international format (starting with +)']);
-        log(response);
+
 
     });
 
@@ -174,7 +173,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['email must be an email']);
-        log(response);
+
     });
 
     test('Registration test empty first name', async ({ request }) => {
@@ -190,7 +189,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['firstname should not be empty', 'firstname must be a string']);
-        log(response);
+
     });
 
     test('Registration test empty last name', async ({ request }) => {
@@ -207,7 +206,7 @@ test.describe('Registration tests', () => {
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['lastname should not be empty', 'lastname must be a string']);
 
-        log(response);
+
     });
 
     test('Registration test empty email', async ({ request }) => {
@@ -224,7 +223,7 @@ test.describe('Registration tests', () => {
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['email must be an email']);
 
-        log(response);
+
     });
 
     test('Registration test empty username', async ({ request }) => {
@@ -240,7 +239,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['username should not be empty', 'username must be a string']);
-        log(response);
+
     });
 
     test('Registration test empty phone number', async ({ request }) => {
@@ -256,7 +255,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['phoneNumber should not be empty', 'phoneNumber must be a string', 'phoneNumber must be in international format (starting with +)']);
-        log(response);
+
     });
 
     test('Registration test empty password', async ({ request }) => {
@@ -272,7 +271,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toStrictEqual(['Password must be at least 8 characters long']);
-        log(response);
+
     });
 
     test('Registration test empty role', async ({ request }) => {
@@ -290,7 +289,7 @@ test.describe('Registration tests', () => {
         expect(response.body.message).toStrictEqual([
             'role must be one of the following values: USER, ADMIN'
         ]);
-        log(response);
+
     });
 
     test('Registration test existing mail', async ({ request }) => {
@@ -306,7 +305,7 @@ test.describe('Registration tests', () => {
         expect(response.body.error).toBe('Conflict');
         expect(response.ok).toBeFalsy();
         expect(response.body.message).toBe('Email "user1@test.com" already exists.');
-        log(response);
+
     });
     //The system throws 500 Internal Server Error when trying to create a user with existing username
     test('Registration test existing username', async ({ request }) => {
@@ -321,7 +320,7 @@ test.describe('Registration tests', () => {
         expect(response.status).toBe(500);
         expect(response.body.message).toBe('Internal server error');
         expect(response.ok).toBeFalsy();
-        log(response);
+
     });
     //The system allows creating a user with existing phone number
     test.fail('Registration test existing phone number', async ({ request }) => {
@@ -336,7 +335,7 @@ test.describe('Registration tests', () => {
         expect(response.status).toBe(400);
         expect(response.body.error).toBe('Bad Request');
         expect(response.ok).toBeFalsy();
-        log(response);
+
     });
 });
 
@@ -348,13 +347,11 @@ test.describe('Product tests', () => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId();
         const addResp = await productService.addProductToBucket(randomItem);
-        log(addResp);
         expect(addResp.status).toBe(201);
         expect(addResp.ok).toBeTruthy();
         expect(addResp.body).toHaveProperty("product_id");
 
         const removeResp = await productService.removeProductFromBucket(randomItem);
-        log(removeResp);
         expect(removeResp.status).toBe(200);
         expect(removeResp.ok).toBeTruthy();
         expect(removeResp.body).toHaveProperty("product_id");
@@ -365,7 +362,6 @@ test.describe('Product tests', () => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId();
         const resp = await productService.getProduct(randomItem);
-        log(resp);
         expect(resp.status).toBe(200);
         expect(resp.ok).toBeTruthy();
         expect(resp.body.id).toBe(randomItem);
@@ -375,7 +371,6 @@ test.describe('Product tests', () => {
         const productService = new ProductService(request);
         const randomItem = giveRandomItemId() - testConfigProducts.firstProductEntryID;
         const resp = await productService.getProduct(randomItem);
-        log(resp);
         expect(resp.status).toBe(404);
         expect(resp.ok).toBeFalsy();
         expect(resp.body.error).toBe('Not Found');
@@ -385,7 +380,6 @@ test.describe('Product tests', () => {
     test('Make an order', async ({ request }) => {
         const productService = new ProductService(request);
         const resp = await productService.makeOrder(testConfigOrders.testOrder);
-        log(resp);
         expect(resp.status).toBe(201);
         expect(resp.ok).toBeTruthy();
         expect(resp.body).toHaveProperty("orderId");
@@ -395,7 +389,6 @@ test.describe('Product tests', () => {
     test.fail('Make an order with empty array of items', async ({ request }) => {
         const productService = new ProductService(request);
         const resp = await productService.makeOrder(testConfigOrders.testEmptyOrder);
-        log(resp);
         expect(resp.status).toBe(400);
         expect(resp.ok).toBeFalsy();
         expect(resp.body.error).toBe('Bad Request');
@@ -409,7 +402,7 @@ test.describe('Admin panel tests', () => {
     test('Open admin product menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
         const response = await userMenuService.openMenu(urls.adminProductURL);
-        log(response);
+
         expect(response.status).toBe(200);
         expect(response.ok).toBeTruthy();
         expect(response.body instanceof Array).toBeTruthy();
@@ -418,7 +411,7 @@ test.describe('Admin panel tests', () => {
     test('Open admin warehouse menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
         const response = await userMenuService.openMenu(urls.adminWarehouseURL);
-        log(response);
+
         expect(response.status).toBe(200);
         expect(response.ok).toBeTruthy();
         expect(response.body instanceof Array).toBeTruthy();
@@ -427,7 +420,7 @@ test.describe('Admin panel tests', () => {
     test('Open admin order menu', async ({ request }) => {
         const userMenuService = new UserMenuService(request);
         const response = await userMenuService.openMenu(urls.adminOrderURL);
-        log(response);
+
         expect(response.status).toBe(200);
         expect(response.ok).toBeTruthy();
         expect(response.body instanceof Array).toBeTruthy();
@@ -437,23 +430,26 @@ test.describe('Admin panel tests', () => {
     test('Create and delete product', async ({ request }) => {
         const createdResponse =
             await createData(request, urls.adminProductURL, testConfigProducts.testProduct);
-        log(createdResponse);
-        console.log(createdResponse.body);
         expect(createdResponse.status).toBe(201);
         expect(createdResponse.ok).toBeTruthy();
         expect(createdResponse.body).toHaveProperty("id");
-        const response = await deleteData(request, urls.adminProductURL, createdResponse.body.id);
-        log(response);
-        expect(response.status).toBe(200);
-        expect(response.ok).toBeTruthy();
-        expect(response.body).toStrictEqual(createdResponse.body);
+
+        if (typeof createdResponse.body.id === "number") {
+            const response = await deleteData(request, urls.adminProductURL, createdResponse.body.id);
+
+            expect(response.status).toBe(200);
+            expect(response.ok).toBeTruthy();
+            expect(response.body).toStrictEqual(createdResponse.body);
+        } else {
+            throw new Error(`id is not a number`);
+        }
+
 
     });
 
     test('Update product', async ({ request }) => {
         const randomProductId = giveRandomItemId();
         const getRandomProduct = await readData(request, urls.adminProductURL, randomProductId);
-        log(getRandomProduct);
         expect(getRandomProduct.status).toBe(200);
         expect(getRandomProduct.ok).toBeTruthy();
         const { id, ...randomProductWithoutId } = getRandomProduct.body;
@@ -462,7 +458,7 @@ test.describe('Admin panel tests', () => {
             ...randomProductWithoutId,
             price: Number(randomProductWithoutId.price)
         });
-        log(response);
+
         expect(response.status).toBe(200);
         expect(response.ok).toBeTruthy();
         expect(response.body).toStrictEqual(getRandomProduct.body);

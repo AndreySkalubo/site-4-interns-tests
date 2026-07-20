@@ -40,18 +40,22 @@ export class AdminPanel {
         const lastEditButton = editButtons.last();
         await lastEditButton.click();
     }
-    async clickProductDeleteButton() {
-        const deleteButtons = this.page.getByRole('button', { name: 'Удалить' });
-        const lastDeleteButton = deleteButtons.last();
-        await lastDeleteButton.click();
+    async clickProductDeleteButton(deletableName: string) {
+        if (typeof deletableName === "string") {
+            await this.page.getByRole('row').filter({
+                has: this.page.getByRole('cell', { name: deletableName })
+            }).getByRole('button', { name: 'Удалить' }).click();
+        } else {
+            await this.page.getByRole('button', { name: 'Удалить' }).last().click();
+        }
     }
-    async fillProductForm({ name, description, price, urlImage }: {name: string, description: string, price: number, urlImage: string}) {
+    async fillProductForm({ name, description, price, urlImage }: { name: string, description: string, price: number, urlImage: string; }) {
         await this.page.getByLabel('Название').fill(name);
         await this.page.getByLabel('Описание').fill(description);
         await this.page.getByLabel('Цена (руб.)').fill(String(price));
         await this.page.getByLabel('URL Изображения').fill(urlImage);
     }
-    async fillWarehouseForm({ name, address }: { name: string; address: string }) {
+    async fillWarehouseForm({ name, address }: { name: string; address: string; }) {
         await this.page.getByLabel('Название').fill(name);
         await this.page.getByLabel('Адрес').fill(address);
     }

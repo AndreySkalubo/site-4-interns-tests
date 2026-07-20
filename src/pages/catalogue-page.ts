@@ -8,19 +8,22 @@ export class CataloguePage {
         this.catalogueHeading = page.getByRole('heading', { name: 'Каталог товаров' });
     }
 
-    async addProductsToCart(number: number) {
+    async addRandProductToCart() {
         const addButtons = this.page.getByRole('button', {
             name: 'В корзину', exact: true
         });
-        for (let i = 0; i < number; i++) {
-            await addButtons.nth(i).click();
-        }
+        const productNames = this.page.locator('.font-semibold.leading-none.tracking-tight.line-clamp-1.group-hover\\:text-primary.transition-colors');
+        const randomProductNumber = Math.floor(Math.random() * await addButtons.count());
+        await addButtons.nth(randomProductNumber).click();
+        console.log(await productNames.count());
+        return productNames.nth(randomProductNumber).innerText();
     }
 
     async openRandomProduct() {
         const products = this.page.getByRole('link', { name: 'В корзину' });
-        const randomIndex = Math.floor(Math.random() * await products.count());
-        await products.nth(randomIndex).click();
+        const product = products.nth(Math.floor(Math.random() * await products.count()));
+        await product.click();
+        return product;
     }
 
     async validateImageLinks() {

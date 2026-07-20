@@ -5,7 +5,7 @@ export async function createData(request: APIRequestContext, url: string, payloa
     return {
         status: response.status(),
         ok: response.ok(),
-        body: await response.json()
+        body: await response.json() as { [key: string]: unknown; }
     };
 }
 
@@ -14,7 +14,7 @@ export async function deleteData(request: APIRequestContext, url: string, id: nu
     return {
         status: response.status(),
         ok: response.ok(),
-        body: await response.json()
+        body: await response.json() as { [key: string]: unknown; }
     };
 }
 
@@ -23,7 +23,7 @@ export async function updateData(request: APIRequestContext, url: string, id: nu
     return {
         status: response.status(),
         ok: response.ok(),
-        body: await response.json()
+        body: await response.json() as { [key: string]: unknown; }
     };
 }
 export async function readData(request: APIRequestContext, url: string, id: number) {
@@ -31,6 +31,6 @@ export async function readData(request: APIRequestContext, url: string, id: numb
     return {
         status: response.status(),
         ok: response.ok(),
-        body: await response.json()
+        body: await response.json() as { [key: string]: unknown; }
     };
 }
