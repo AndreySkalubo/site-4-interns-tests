@@ -15,7 +15,7 @@ test.describe('Authentication tests', () => {
     test('Login test admin', async ({ request }) => {
         //201 Created
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.admin);
+            await createData(request, urls.loginApiURL, testConfigCredentials.admin);
         expect(response.status).toBe(201);
         expect(response.ok).toBeTruthy();
         expect(response.body.email).toBe(testConfigCredentials.admin.email);
@@ -24,7 +24,7 @@ test.describe('Authentication tests', () => {
     test('Login test user1', async ({ request }) => {
         //201 Created
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.user1);
+            await createData(request, urls.loginApiURL, testConfigCredentials.user1);
         expect(response.status).toBe(201);
         expect(response.ok).toBeTruthy();
         expect(response.body.email).toBe(testConfigCredentials.user1.email);
@@ -33,7 +33,7 @@ test.describe('Authentication tests', () => {
     test('Login test bad email', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.user1BadData);
+            await createData(request, urls.loginApiURL, testConfigCredentials.user1BadData);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');
@@ -43,7 +43,7 @@ test.describe('Authentication tests', () => {
     test('Login test non-existent email', async ({ request }) => {
         //401 Unauthorized
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.nonExistentData);
+            await createData(request, urls.loginApiURL, testConfigCredentials.nonExistentData);
         expect(response.status).toBe(401);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Unauthorized');
@@ -53,7 +53,7 @@ test.describe('Authentication tests', () => {
     test('Login test empty password', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.emptyPassword);
+            await createData(request, urls.loginApiURL, testConfigCredentials.emptyPassword);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');
@@ -66,7 +66,7 @@ test.describe('Authentication tests', () => {
     test('Login test empty email', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.emptyEmail);
+            await createData(request, urls.loginApiURL, testConfigCredentials.emptyEmail);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');
@@ -76,7 +76,7 @@ test.describe('Authentication tests', () => {
     test('Login test empty email and password', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.emptyLoginData);
+            await createData(request, urls.loginApiURL, testConfigCredentials.emptyLoginData);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');
@@ -90,7 +90,7 @@ test.describe('Authentication tests', () => {
     test('SQL injection #1', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.sqlInjection);
+            await createData(request, urls.loginApiURL, testConfigCredentials.sqlInjection);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');
@@ -104,7 +104,7 @@ test.describe('Authentication tests', () => {
     test('SQL injection #2', async ({ request }) => {
         //400 Bad Request
         const response =
-            await createData(request, urls.loginURL, testConfigCredentials.sqlInjection2);
+            await createData(request, urls.loginApiURL, testConfigCredentials.sqlInjection2);
         expect(response.status).toBe(400);
         expect(response.ok).toBeFalsy();
         expect(response.body.error).toBe('Bad Request');

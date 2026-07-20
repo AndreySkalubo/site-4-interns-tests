@@ -26,8 +26,13 @@ test.describe('Login page tests', () => {
         await loginPage.openLoginPage();
 
         await loginPage.login(testConfigCredentials.admin.email, testConfigCredentials.admin.password);
-        await page.waitForURL(urls.baseURL);
 
+        await page.waitForURL(urls.baseURL);
+        expect(page.url()).toBe(urls.baseURL);
+
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.adminPanelButton.waitFor({ state: "visible" });
+        await expect(headerComponent.adminPanelButton).toBeVisible();
     });
 
     test('user login', async ({ page }) => {
@@ -37,7 +42,11 @@ test.describe('Login page tests', () => {
 
         await loginPage.login(testConfigCredentials.user1.email, testConfigCredentials.user1.password);
         await page.waitForURL(urls.baseURL);
+        expect(page.url()).toBe(urls.baseURL);
 
+        const headerComponent = new HeaderComponent(page);
+        await headerComponent.cartButton.waitFor({ state: "visible" });
+        await expect(headerComponent.cartButton).toBeVisible();
     });
 
     test('nonexistent data login', async ({ page }) => {
@@ -48,6 +57,8 @@ test.describe('Login page tests', () => {
         await loginPage.login(testConfigCredentials.user1BadData.email, testConfigCredentials.user1BadData.password);
         await expect(page).not.toHaveURL(urls.baseURL);
 
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('empty password login', async ({ page }) => {
@@ -58,6 +69,8 @@ test.describe('Login page tests', () => {
         await loginPage.login(testConfigCredentials.user1.email, '');
         await expect(page).not.toHaveURL(urls.baseURL);
 
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('empty email login', async ({ page }) => {
@@ -68,6 +81,8 @@ test.describe('Login page tests', () => {
         await loginPage.login('', testConfigCredentials.user1.password);
         await expect(page).not.toHaveURL(urls.baseURL);
 
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('empty data login', async ({ page }) => {
@@ -77,6 +92,9 @@ test.describe('Login page tests', () => {
 
         await loginPage.login('', '');
         await expect(page).not.toHaveURL(urls.baseURL);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('correct data registration', async ({ page }) => {
@@ -89,6 +107,8 @@ test.describe('Login page tests', () => {
         await registrationPage.register(createValidRegistrationData());
         await registrationPage.verifyRegistrationSuccess(loginPage);
 
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('temp mail registration', async ({ page }) => {
@@ -104,6 +124,8 @@ test.describe('Login page tests', () => {
         });
         await registrationPage.verifyRegistrationSuccess(loginPage);
 
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('registration with invalid email', async ({ page }) => {
@@ -118,6 +140,9 @@ test.describe('Login page tests', () => {
             email: faker.internet.email({ provider: "" })
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('registration with invalid phone number', async ({ page }) => {
@@ -133,6 +158,9 @@ test.describe('Login page tests', () => {
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
 
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('уже есть аккаунт? войти', async ({ page }) => {
@@ -142,6 +170,9 @@ test.describe('Login page tests', () => {
         await loginPage.goToRegistrationPage();
 
         await expect(page).toHaveURL(urls.webRegistrationURL);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('registration with existing email', async ({ page }) => {
@@ -156,6 +187,9 @@ test.describe('Login page tests', () => {
             email: testConfigCredentials.existingUser.email
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('registration with existing phone number', async ({ page }) => {
@@ -170,6 +204,9 @@ test.describe('Login page tests', () => {
             phoneNumber: testConfigCredentials.existingUser.phoneNumber
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 
     test('registration with existing username', async ({ page }) => {
@@ -184,6 +221,9 @@ test.describe('Login page tests', () => {
             username: testConfigCredentials.existingUser.username
         });
         await registrationPage.verifyRegistrationFailure(loginPage);
+
+        const headerComponent = new HeaderComponent(page);
+        await expect(headerComponent.cartButton).not.toBeVisible();
     });
 });
 
@@ -208,7 +248,6 @@ test.describe('Catalogue and product tests', () => {
         await headerComponent.returnToCatalogue();
 
         const cataloguePage = new CataloguePage(page);
-        // const numberOfProductsToAdd = 5;
         const addedProductName = await cataloguePage.addRandProductToCart();
 
         await headerComponent.goToCartPage();
@@ -249,7 +288,7 @@ test.describe('Catalogue and product tests', () => {
         await headerComponent.goToCartPage();
         await cartPage.verifyCartItem(itemName);
         await cartPage.removeAllItemsFromCart();
-});
+    });
 
     //На странице каталога нет некоторых изображений, поэтому тест падает.
     test.fail('verify product images presence', async ({ page }) => {

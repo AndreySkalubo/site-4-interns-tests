@@ -32,6 +32,7 @@ export class CataloguePage {
             const imageUrl = await imageLinks.nth(i).getAttribute('src');
             const imageResponse = await this.page.request.get(String(imageUrl));
             expect(imageResponse.ok()).toBeTruthy();
+            expect(imageResponse.status()).toBe(200);
         }
     }
 

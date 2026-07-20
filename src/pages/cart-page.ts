@@ -9,6 +9,7 @@ export class CartPage {
     }
 
     async verifyCartItem(string: string) {
+        await expect(this.makeOrderButton).toBeVisible();
         await expect(this.page.getByText(string)).toBeVisible();
     }
     async removeAllItemsFromCart() {
